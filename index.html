@@ -1,183 +1,1282 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Le Vespa — Cucina Italiana · Bourg-en-Bresse</title>
-  <meta name="description" content="Restaurant italien à Bourg-en-Bresse. Pâtes fraîches, ravioli maison, risotto crémeux. Réservez votre table en ligne.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Le Vespa — Cucina Italiana · Bourg-en-Bresse</title>
+<meta name="description" content="Restaurant italien à Bourg-en-Bresse. Pâtes fraîches, ravioli maison, risotto crémeux. Réservez votre table en ligne.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400;1,600;1,700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Inter:wght@300;400;500;600&family=Caveat:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   LE VESPA — Restaurant italien · Bourg-en-Bresse
+   Design : moderne · épuré · brut · artisanal
+   ============================================================ */
+
+:root {
+  --bg:           #0b0a08;
+  --bg-2:         #141210;
+  --bg-3:         #1d1a16;
+  --bg-card:      #161310;
+  --bg-modal:     #1c1814;
+  --gold:         #d4af6d;
+  --gold-2:       #e8c98d;
+  --gold-dim:     rgba(212,175,109,0.16);
+  --gold-glow:    rgba(212,175,109,0.08);
+  --red:          #c84b3c;
+  --red-dim:      rgba(200,75,60,0.14);
+  --green:        #7ba564;
+  --text:         #f2ede0;
+  --text-2:       #b5ab98;
+  --text-muted:   #877c69;
+  --text-dim:     #5a5246;
+  --border:       rgba(255,255,255,0.06);
+  --border-gold:  rgba(212,175,109,0.28);
+  --serif:        'Playfair Display', 'EB Garamond', Georgia, serif;
+  --italic:       'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+  --hand:         'Caveat', 'Brush Script MT', cursive;
+  --sans:         'Inter', system-ui, -apple-system, sans-serif;
+  --ease:         cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-out:     cubic-bezier(0.16, 1, 0.3, 1);
+  --t-fast:       0.25s var(--ease);
+  --t-med:        0.45s var(--ease);
+  --t-slow:       0.7s var(--ease-out);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.65;
+  overflow-x: hidden;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+img, svg { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+button { cursor: pointer; border: none; background: none; font: inherit; color: inherit; }
+ul { list-style: none; }
+input, textarea, select { font: inherit; color: var(--text); }
+::selection { background: var(--gold); color: var(--bg); }
+
+/* ---- Grain overlay ---- */
+.grain {
+  position: fixed; inset: 0; pointer-events: none; z-index: 9998;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 320 320' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.04;
+  mix-blend-mode: overlay;
+}
+
+.container { max-width: 1180px; margin: 0 auto; padding: 0 28px; }
+
+/* ---- Reveal ---- */
+.reveal { opacity: 0; transform: translateY(32px); transition: opacity 0.9s var(--ease-out), transform 0.9s var(--ease-out); }
+.reveal.in { opacity: 1; transform: none; }
+
+/* ============================================================
+   NAVIGATION
+   ============================================================ */
+#nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  padding: 26px 0;
+  transition: background var(--t-med), padding var(--t-med), backdrop-filter var(--t-med), border-color var(--t-med);
+  border-bottom: 1px solid transparent;
+}
+#nav.scrolled {
+  background: rgba(11,10,8,0.88);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  padding: 14px 0;
+  border-bottom-color: var(--border);
+}
+.nav-inner {
+  max-width: 1180px; margin: 0 auto; padding: 0 28px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.logo {
+  display: flex; align-items: baseline; gap: 6px;
+  font-family: var(--serif);
+}
+.logo-1 { font-style: italic; font-weight: 400; color: var(--gold); font-size: 1.45rem; }
+.logo-2 { font-weight: 800; font-size: 1.55rem; letter-spacing: 0.08em; text-transform: uppercase; }
+.logo-dot { color: var(--red); font-size: 1.2rem; line-height: 1; }
+
+.nav-links { display: flex; gap: 44px; align-items: center; }
+.nav-link {
+  font-size: 0.77rem; letter-spacing: 0.18em; text-transform: uppercase;
+  font-weight: 500; color: var(--text-2);
+  transition: color var(--t-fast); position: relative; padding: 6px 0;
+}
+.nav-link::after {
+  content: ''; position: absolute; bottom: 0; left: 0;
+  width: 0; height: 1px; background: var(--gold);
+  transition: width var(--t-med);
+}
+.nav-link:hover, .nav-link.active { color: var(--text); }
+.nav-link.active::after, .nav-link:hover::after { width: 100%; }
+
+.nav-cta {
+  padding: 9px 22px; border: 1px solid var(--border-gold);
+  border-radius: 100px; color: var(--gold); font-size: 0.72rem;
+  letter-spacing: 0.16em; text-transform: uppercase; font-weight: 500;
+  transition: all var(--t-fast);
+}
+.nav-cta:hover { background: var(--gold); color: var(--bg); border-color: var(--gold); }
+
+/* Hamburger */
+.burger {
+  display: none; flex-direction: column; gap: 5px;
+  width: 32px; padding: 6px 4px;
+}
+.burger span { display: block; height: 1.5px; background: var(--text); transition: var(--t-fast); }
+.burger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+.burger.open span:nth-child(2) { opacity: 0; }
+.burger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+.mobile-menu {
+  position: fixed; inset: 0; background: rgba(8,7,6,0.98); z-index: 999;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 40px; opacity: 0; pointer-events: none; transition: opacity var(--t-med);
+}
+.mobile-menu.open { opacity: 1; pointer-events: all; }
+.mobile-menu a {
+  font-family: var(--serif); font-size: 2.5rem; font-style: italic;
+  color: var(--text-2); transition: color var(--t-fast);
+}
+.mobile-menu a:hover { color: var(--gold); }
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 140px 28px 100px;
+  overflow: hidden;
+  background: var(--bg);
+}
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 90% 60% at 50% 38%, rgba(212,175,109,0.10) 0%, transparent 65%),
+    radial-gradient(ellipse 70% 50% at 50% 90%, rgba(200,75,60,0.06) 0%, transparent 65%),
+    repeating-linear-gradient(-45deg, transparent 0 60px, rgba(212,175,109,0.012) 60px 120px);
+}
+.hero::after {
+  content: '';
+  position: absolute;
+  width: 800px; height: 800px;
+  border-radius: 50%;
+  border: 1px solid var(--border-gold);
+  top: 50%; left: 50%; transform: translate(-50%, -50%);
+  opacity: 0.3;
+  animation: pulseRing 8s ease-in-out infinite;
+}
+@keyframes pulseRing {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.3; }
+  50% { transform: translate(-50%, -50%) scale(1.05); opacity: 0.15; }
+}
+
+.hero-bg-vespa {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 700px; max-width: 90vw;
+  opacity: 0.04;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.hero-content { position: relative; z-index: 2; max-width: 920px; }
+
+.hero-eyebrow {
+  font-size: 0.74rem; letter-spacing: 0.32em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 32px; font-weight: 400;
+  display: inline-flex; align-items: center; gap: 18px;
+}
+.hero-eyebrow::before, .hero-eyebrow::after {
+  content: ''; display: block; width: 36px; height: 1px; background: var(--gold-dim);
+}
+
+.hero-title {
+  font-family: var(--serif);
+  line-height: 0.88;
+  margin-bottom: 36px;
+}
+.hero-title .l1 {
+  display: block;
+  font-size: clamp(3rem, 8vw, 5.5rem);
+  font-weight: 400; font-style: italic;
+  color: var(--gold);
+  letter-spacing: 0.02em;
+  margin-bottom: 0;
+}
+.hero-title .l2 {
+  display: block;
+  font-size: clamp(4.5rem, 14vw, 11rem);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: linear-gradient(180deg, var(--text) 0%, #c5b896 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero-tag {
+  font-family: var(--italic);
+  font-size: clamp(1.05rem, 2.2vw, 1.4rem);
+  font-weight: 300;
+  font-style: italic;
+  color: var(--text-2);
+  margin-bottom: 16px;
+}
+.hero-tag-2 {
+  font-family: var(--hand);
+  font-size: clamp(1.1rem, 2.2vw, 1.4rem);
+  color: var(--red);
+  margin-bottom: 48px;
+  transform: rotate(-1.5deg);
+  display: inline-block;
+}
+
+.hero-cta { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+
+.scroll-indicator {
+  position: absolute; bottom: 36px; left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  font-size: 0.65rem; letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--text-dim);
+}
+.scroll-indicator::after {
+  content: ''; width: 1px; height: 44px;
+  background: linear-gradient(to bottom, var(--text-dim), transparent);
+  animation: scrollPulse 2.2s ease-in-out infinite;
+}
+@keyframes scrollPulse {
+  0%, 100% { opacity: 0.3; transform: scaleY(0.6) translateY(0); }
+  50% { opacity: 1; transform: scaleY(1) translateY(6px); }
+}
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 10px; padding: 16px 36px; border-radius: 4px;
+  font-size: 0.76rem; font-weight: 500; letter-spacing: 0.18em;
+  text-transform: uppercase; cursor: pointer;
+  transition: all var(--t-fast); white-space: nowrap;
+  position: relative; overflow: hidden;
+}
+.btn-gold {
+  background: var(--gold); color: var(--bg); border: 1px solid var(--gold);
+}
+.btn-gold:hover {
+  background: var(--gold-2); border-color: var(--gold-2);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 36px rgba(212,175,109,0.3);
+}
+.btn-outline {
+  background: transparent; color: var(--gold);
+  border: 1px solid var(--border-gold);
+}
+.btn-outline:hover {
+  background: var(--gold-glow); border-color: var(--gold);
+  transform: translateY(-2px);
+}
+.btn-ghost {
+  background: transparent; color: var(--text-2);
+  border: 1px solid var(--border);
+}
+.btn-ghost:hover { color: var(--text); border-color: var(--text-muted); }
+
+/* ============================================================
+   ORNAMENT DIVIDERS
+   ============================================================ */
+.ornament {
+  display: flex; align-items: center; justify-content: center;
+  gap: 18px; margin: 0 auto; max-width: 320px;
+  color: var(--gold);
+  padding: 28px 0;
+}
+.ornament::before, .ornament::after {
+  content: ''; flex: 1; height: 1px;
+  background: linear-gradient(to right, transparent, var(--gold-dim), transparent);
+}
+.ornament svg { width: 32px; height: 32px; opacity: 0.85; }
+
+/* ============================================================
+   SECTIONS GENERIQUES
+   ============================================================ */
+section { padding: 140px 0; }
+.section-head { text-align: center; margin-bottom: 80px; }
+.eyebrow {
+  font-size: 0.72rem; letter-spacing: 0.28em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 18px; font-weight: 400;
+  display: inline-flex; align-items: center; gap: 14px;
+}
+.eyebrow::before, .eyebrow::after {
+  content: ''; display: block; width: 24px; height: 1px; background: var(--gold-dim);
+}
+.section-head h2 {
+  font-family: var(--serif);
+  font-size: clamp(2.2rem, 4.5vw, 3.6rem);
+  font-weight: 700; line-height: 1.1;
+  margin-bottom: 18px;
+}
+.section-head h2 em { color: var(--gold); font-style: italic; font-weight: 400; }
+.section-sub {
+  color: var(--text-muted); font-size: 0.92rem;
+  max-width: 520px; margin: 0 auto; line-height: 1.7;
+}
+
+/* ============================================================
+   ABOUT
+   ============================================================ */
+.about { background: var(--bg-2); border-top: 1px solid var(--border); }
+.about-layout {
+  display: grid; grid-template-columns: 1.05fr 1fr;
+  gap: 88px; align-items: center;
+}
+.about-text h2 {
+  font-family: var(--serif); font-size: clamp(2rem, 3.8vw, 3rem);
+  line-height: 1.18; font-weight: 700; margin: 18px 0 28px;
+}
+.about-text h2 em { color: var(--gold); font-style: italic; font-weight: 400; }
+.about-body {
+  color: var(--text-2); font-weight: 300;
+  font-size: 1.05rem; line-height: 1.85; margin-bottom: 32px;
+}
+.about-body + .about-body { margin-top: -16px; margin-bottom: 36px; }
+.about-quote {
+  font-family: var(--italic); font-size: 1.5rem;
+  font-style: italic; color: var(--gold);
+  border-left: 2px solid var(--gold);
+  padding: 8px 0 8px 24px; margin-bottom: 44px;
+  position: relative;
+}
+.about-quote::after {
+  content: '— maxime italienne';
+  display: block;
+  font-family: var(--hand);
+  font-size: 1rem;
+  color: var(--text-dim);
+  margin-top: 12px;
+  font-style: normal;
+}
+
+.about-visual {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+.stat {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 8px; padding: 36px 26px;
+  display: flex; flex-direction: column; gap: 10px;
+  transition: all var(--t-med); position: relative;
+  overflow: hidden;
+}
+.stat::before {
+  content: ''; position: absolute;
+  top: 0; left: 0; right: 0; height: 2px;
+  background: var(--gold);
+  transform: scaleX(0); transform-origin: left;
+  transition: transform var(--t-med);
+}
+.stat:hover { border-color: var(--border-gold); transform: translateY(-4px); }
+.stat:hover::before { transform: scaleX(1); }
+.stat:first-child { grid-column: 1 / -1; padding: 44px 32px; }
+.stat-num {
+  font-family: var(--serif); font-size: 3.2rem;
+  font-weight: 800; color: var(--gold);
+  line-height: 1; letter-spacing: -0.02em;
+}
+.stat:first-child .stat-num { font-size: 4rem; }
+.stat-label {
+  font-size: 0.82rem; color: var(--text-2);
+  letter-spacing: 0.1em; line-height: 1.5;
+  text-transform: uppercase; font-weight: 500;
+}
+
+/* ============================================================
+   MENU
+   ============================================================ */
+#menu { background: var(--bg); border-top: 1px solid var(--border); }
+
+.menu-tabs {
+  display: flex; gap: 8px; justify-content: center;
+  flex-wrap: wrap; margin-bottom: 28px;
+}
+.tab {
+  padding: 12px 28px; border-radius: 100px;
+  border: 1px solid var(--border);
+  font-size: 0.76rem; letter-spacing: 0.14em;
+  text-transform: uppercase; font-weight: 500;
+  color: var(--text-2); transition: all var(--t-fast);
+}
+.tab:hover { border-color: var(--border-gold); color: var(--text); }
+.tab.active {
+  background: var(--gold); border-color: var(--gold);
+  color: var(--bg); box-shadow: 0 6px 20px rgba(212,175,109,0.25);
+}
+
+.cat-tagline {
+  text-align: center; font-family: var(--italic);
+  font-style: italic; color: var(--text-muted);
+  font-size: 1.15rem; margin-bottom: 64px;
+  min-height: 1.5em; transition: opacity var(--t-fast);
+}
+
+.menu-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 18px; margin-bottom: 56px;
+}
+
+.dish {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 8px; padding: 26px 26px 22px;
+  cursor: pointer; transition: all var(--t-med);
+  position: relative; overflow: hidden;
+}
+.dish::before {
+  content: ''; position: absolute;
+  top: 0; left: 0; width: 3px; height: 100%;
+  background: var(--gold);
+  transform: scaleY(0); transform-origin: top;
+  transition: transform var(--t-med);
+}
+.dish:hover {
+  border-color: var(--border-gold);
+  transform: translateY(-4px);
+  box-shadow: 0 16px 48px rgba(0,0,0,0.4);
+}
+.dish:hover::before { transform: scaleY(1); }
+
+.dish-swatch {
+  width: 100%; height: 8px;
+  border-radius: 100px;
+  margin-bottom: 18px;
+  opacity: 0.7;
+}
+
+.dish-top {
+  display: flex; justify-content: space-between;
+  align-items: flex-start; gap: 16px; margin-bottom: 12px;
+}
+.dish-name {
+  font-family: var(--serif); font-size: 1.1rem;
+  font-weight: 600; line-height: 1.3; flex: 1;
+}
+.dish-price {
+  font-family: var(--serif); font-size: 1.1rem;
+  font-weight: 600; color: var(--gold);
+  white-space: nowrap;
+}
+.dish-desc {
+  font-size: 0.85rem; color: var(--text-muted);
+  line-height: 1.65; margin-bottom: 18px;
+}
+.dish-bottom {
+  display: flex; align-items: center; gap: 12px;
+  justify-content: space-between;
+}
+.dish-allergens {
+  display: flex; gap: 4px; flex-wrap: wrap;
+}
+.allergen-dot {
+  width: 20px; height: 20px; border-radius: 50%;
+  background: var(--bg-3); border: 1px solid var(--border);
+  font-size: 0.65rem; display: flex;
+  align-items: center; justify-content: center;
+  color: var(--text-muted); font-weight: 500;
+}
+.dish-cta {
+  font-size: 0.7rem; color: var(--text-dim);
+  letter-spacing: 0.12em; text-transform: uppercase;
+  transition: color var(--t-fast);
+  display: inline-flex; align-items: center; gap: 4px;
+}
+.dish:hover .dish-cta { color: var(--gold); }
+
+.badge {
+  display: inline-block;
+  font-size: 0.6rem; letter-spacing: 0.12em;
+  text-transform: uppercase; font-weight: 600;
+  padding: 4px 10px; border-radius: 100px;
+  background: var(--gold-dim); color: var(--gold);
+  border: 1px solid var(--border-gold);
+  margin-bottom: 14px;
+}
+.badge.b-vege { background: rgba(123,165,100,0.14); color: var(--green); border-color: rgba(123,165,100,0.3); }
+.badge.b-chef { background: var(--red-dim); color: var(--red); border-color: rgba(200,75,60,0.3); }
+
+.menu-note {
+  display: flex; align-items: center; gap: 18px;
+  background: linear-gradient(135deg, var(--bg-2), var(--bg-3));
+  border: 1px solid var(--border-gold);
+  border-radius: 8px; padding: 22px 28px;
+  margin-top: 18px;
+  position: relative; overflow: hidden;
+}
+.menu-note::before {
+  content: ''; position: absolute;
+  top: 0; right: 0; width: 180px; height: 180px;
+  background: radial-gradient(circle, var(--red-dim), transparent 70%);
+  transform: translate(50%, -50%);
+}
+.note-icon {
+  color: var(--red); font-size: 1.3rem;
+  flex-shrink: 0; position: relative;
+}
+.menu-note p { font-size: 0.92rem; color: var(--text-2); position: relative; }
+.menu-note strong { color: var(--gold); font-weight: 600; }
+
+.menu-print {
+  text-align: center; margin-top: 40px;
+}
+
+/* ============================================================
+   CONTACT
+   ============================================================ */
+#contact { background: var(--bg-2); border-top: 1px solid var(--border); }
+.contact-layout {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 72px; align-items: start;
+}
+.contact-info { display: flex; flex-direction: column; gap: 32px; }
+.contact-item {
+  display: flex; gap: 22px; align-items: flex-start;
+  padding: 4px 0;
+}
+.contact-icon {
+  width: 48px; height: 48px;
+  border: 1px solid var(--border-gold);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; color: var(--gold);
+  background: var(--gold-glow);
+  transition: all var(--t-fast);
+}
+.contact-item:hover .contact-icon {
+  background: var(--gold-dim);
+  transform: scale(1.05);
+}
+.contact-icon svg { width: 20px; height: 20px; }
+.contact-label {
+  font-size: 0.7rem; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--text-dim);
+  margin-bottom: 6px; font-weight: 500;
+}
+.contact-value {
+  font-size: 1rem; color: var(--text);
+  line-height: 1.55;
+}
+.contact-link { transition: color var(--t-fast); }
+.contact-link:hover { color: var(--gold); }
+.hours-grid {
+  display: grid; grid-template-columns: auto 1fr;
+  gap: 8px 24px; font-size: 0.94rem;
+}
+.hours-grid .closed { color: var(--text-dim); }
+.hours-grid > span:nth-child(odd) { color: var(--text-2); }
+
+.map-block {
+  height: 100%; min-height: 420px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 12px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; padding: 48px; position: relative; overflow: hidden;
+}
+.map-block::before {
+  content: ''; position: absolute; inset: 0;
+  background:
+    repeating-linear-gradient(0deg, rgba(212,175,109,0.05) 0, rgba(212,175,109,0.05) 1px, transparent 1px, transparent 48px),
+    repeating-linear-gradient(90deg, rgba(212,175,109,0.05) 0, rgba(212,175,109,0.05) 1px, transparent 1px, transparent 48px);
+}
+.map-block::after {
+  content: ''; position: absolute;
+  width: 380px; height: 380px;
+  background: radial-gradient(circle, var(--gold-glow) 0%, transparent 60%);
+  filter: blur(40px);
+}
+.map-pin {
+  width: 64px; height: 64px;
+  background: var(--gold); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  position: relative; z-index: 1; margin-bottom: 20px;
+  box-shadow: 0 12px 36px rgba(212,175,109,0.4);
+  animation: pinBounce 2s ease-in-out infinite;
+}
+@keyframes pinBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.map-pin svg { width: 28px; height: 28px; color: var(--bg); }
+.map-city {
+  font-family: var(--serif); font-size: 1.6rem;
+  font-weight: 700; position: relative; z-index: 1;
+  margin-bottom: 6px;
+}
+.map-addr {
+  font-size: 0.88rem; color: var(--text-muted);
+  position: relative; z-index: 1;
+  margin-bottom: 24px;
+}
+.map-block .btn { position: relative; z-index: 1; }
+
+/* ============================================================
+   RESERVATION
+   ============================================================ */
+#reserver { background: var(--bg); border-top: 1px solid var(--border); }
+.resa { max-width: 780px; margin: 0 auto; }
+
+.steps {
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 64px;
+}
+.step {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 10px; min-width: 80px;
+}
+.step-circle {
+  width: 42px; height: 42px; border-radius: 50%;
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.86rem; font-weight: 600;
+  color: var(--text-dim);
+  transition: all var(--t-med);
+  background: var(--bg);
+}
+.step.active .step-circle {
+  background: var(--gold); border-color: var(--gold);
+  color: var(--bg); box-shadow: 0 8px 24px rgba(212,175,109,0.3);
+}
+.step.done .step-circle {
+  background: var(--gold-dim); border-color: var(--border-gold);
+  color: var(--gold);
+}
+.step.done .step-circle::after { content: '✓'; }
+.step.done .step-circle .num { display: none; }
+.step-name {
+  font-size: 0.66rem; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--text-dim);
+  font-weight: 500;
+}
+.step.active .step-name { color: var(--gold); }
+.step.done .step-name { color: var(--text-2); }
+.step-line {
+  flex: 1; max-width: 100px; height: 1px;
+  background: var(--border); margin-bottom: 28px;
+  position: relative; overflow: hidden;
+}
+.step-line.passed::after {
+  content: ''; position: absolute; inset: 0;
+  background: var(--gold);
+}
+
+.panel { display: none; animation: slideUp 0.5s var(--ease-out); }
+.panel.active { display: block; }
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: none; }
+}
+
+.panel-title {
+  font-family: var(--serif); font-size: 1.5rem;
+  font-weight: 600; margin-bottom: 32px;
+  text-align: center;
+}
+.panel-title em { color: var(--gold); font-style: italic; }
+
+/* Calendar */
+.cal {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 12px; padding: 32px;
+}
+.cal-head {
+  display: flex; align-items: center; justify-content: center;
+  gap: 24px; margin-bottom: 24px;
+}
+.cal-month {
+  font-family: var(--serif); font-size: 1.25rem;
+  font-weight: 600; min-width: 200px; text-align: center;
+}
+.cal-nav {
+  width: 40px; height: 40px; border-radius: 50%;
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem; color: var(--text-2);
+  transition: all var(--t-fast);
+}
+.cal-nav:hover { border-color: var(--border-gold); color: var(--gold); }
+.cal-weekdays {
+  display: grid; grid-template-columns: repeat(7, 1fr);
+  gap: 4px; margin-bottom: 10px; text-align: center;
+}
+.cal-weekdays span {
+  font-size: 0.7rem; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--text-dim);
+  padding: 10px 0; font-weight: 500;
+}
+.cal-grid {
+  display: grid; grid-template-columns: repeat(7, 1fr);
+  gap: 4px; margin-bottom: 20px;
+}
+.cal-day {
+  aspect-ratio: 1; display: flex;
+  align-items: center; justify-content: center;
+  border-radius: 8px; font-size: 0.92rem;
+  cursor: pointer; transition: all var(--t-fast);
+  border: 1px solid transparent; color: var(--text-2);
+  position: relative;
+}
+.cal-day:not(.disabled):not(.empty):hover {
+  background: var(--gold-dim); border-color: var(--border-gold);
+  color: var(--gold);
+}
+.cal-day.today { border-color: var(--border-gold); color: var(--gold); font-weight: 600; }
+.cal-day.selected {
+  background: var(--gold); color: var(--bg);
+  font-weight: 700; border-color: var(--gold);
+  box-shadow: 0 6px 20px rgba(212,175,109,0.4);
+  transform: scale(1.05);
+}
+.cal-day.disabled {
+  color: var(--text-dim); cursor: not-allowed; opacity: 0.4;
+}
+.cal-day.empty { cursor: default; }
+.cal-legend {
+  font-size: 0.78rem; color: var(--text-dim); text-align: center;
+  display: flex; align-items: center; justify-content: center;
+  gap: 8px; padding-top: 16px; border-top: 1px solid var(--border);
+}
+.cal-legend svg { width: 14px; height: 14px; color: var(--text-dim); }
+
+/* Selected date display */
+.date-shown {
+  text-align: center;
+  font-family: var(--italic); font-style: italic;
+  font-size: 1.2rem; color: var(--gold);
+  margin-bottom: 36px;
+  padding-bottom: 24px; border-bottom: 1px solid var(--border);
+}
+
+/* Covers */
+.field { margin-bottom: 36px; }
+.field-label {
+  font-size: 0.74rem; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--text-2);
+  margin-bottom: 14px; font-weight: 500;
+}
+.covers {
+  display: flex; gap: 8px; flex-wrap: wrap;
+}
+.cover {
+  width: 50px; height: 50px; border-radius: 8px;
+  border: 1px solid var(--border);
+  font-size: 0.95rem; color: var(--text-2);
+  transition: all var(--t-fast);
+}
+.cover:hover { border-color: var(--border-gold); color: var(--text); }
+.cover.active {
+  background: var(--gold); border-color: var(--gold);
+  color: var(--bg); font-weight: 700;
+  box-shadow: 0 6px 20px rgba(212,175,109,0.3);
+}
+
+.slot-period {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 0.72rem; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--text-muted);
+  margin: 28px 0 14px; font-weight: 500;
+}
+.slot-period svg { width: 16px; height: 16px; }
+.slots {
+  display: flex; gap: 8px; flex-wrap: wrap;
+}
+.slot {
+  padding: 11px 22px; border-radius: 8px;
+  border: 1px solid var(--border);
+  font-size: 0.9rem; color: var(--text-2);
+  transition: all var(--t-fast); font-weight: 500;
+}
+.slot:hover { border-color: var(--border-gold); color: var(--text); }
+.slot.active {
+  background: var(--gold); border-color: var(--gold);
+  color: var(--bg); font-weight: 600;
+}
+
+.panel-actions {
+  margin-top: 40px;
+  display: flex; gap: 12px; align-items: center;
+}
+
+/* Booking summary */
+.booking-summary {
+  background: var(--bg-card);
+  border: 1px solid var(--border-gold);
+  border-radius: 8px; padding: 20px 24px;
+  margin-bottom: 32px;
+  display: flex; align-items: center; gap: 16px;
+  position: relative; overflow: hidden;
+}
+.booking-summary::before {
+  content: ''; position: absolute;
+  top: 0; left: 0; width: 3px; height: 100%;
+  background: var(--gold);
+}
+.booking-summary svg { color: var(--gold); flex-shrink: 0; }
+.booking-summary div {
+  font-family: var(--italic); font-style: italic;
+  font-size: 1rem; color: var(--text);
+}
+
+/* Form */
+.resa-form { display: flex; flex-direction: column; gap: 18px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.form-group { display: flex; flex-direction: column; gap: 8px; }
+.form-group label {
+  font-size: 0.72rem; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--text-2);
+  font-weight: 500;
+}
+.form-group input, .form-group textarea {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 8px; padding: 14px 18px;
+  font-size: 0.95rem; width: 100%; resize: vertical;
+  transition: border-color var(--t-fast), background var(--t-fast);
+}
+.form-group input:focus, .form-group textarea:focus {
+  outline: none; border-color: var(--gold);
+  background: var(--bg-2);
+}
+.form-group input.err { border-color: var(--red); }
+
+/* Confirmation */
+.confirmation { display: none; max-width: 540px; margin: 0 auto; text-align: center; }
+.confirmation.show { display: block; animation: confIn 0.6s var(--ease-out); }
+@keyframes confIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: none; }
+}
+.conf-check {
+  width: 88px; height: 88px; border-radius: 50%;
+  background: var(--gold-dim); border: 2px solid var(--gold);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2.2rem; color: var(--gold);
+  margin: 0 auto 32px;
+  animation: checkPop 0.8s var(--ease-out);
+}
+@keyframes checkPop {
+  0% { transform: scale(0); }
+  60% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+.confirmation h3 {
+  font-family: var(--serif); font-size: 2rem;
+  font-weight: 700; margin-bottom: 16px;
+}
+.conf-details {
+  background: var(--bg-card); border: 1px solid var(--border-gold);
+  border-radius: 8px; padding: 24px; margin: 24px 0;
+  text-align: left;
+}
+.conf-row {
+  display: flex; justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.92rem;
+}
+.conf-row:last-child { border-bottom: none; }
+.conf-row span:first-child {
+  color: var(--text-muted); font-size: 0.74rem;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  font-weight: 500;
+}
+.conf-row span:last-child { color: var(--text); font-weight: 500; }
+.conf-sub { color: var(--text-muted); font-size: 0.92rem; margin-bottom: 32px; line-height: 1.7; }
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+footer {
+  background: var(--bg-2); border-top: 1px solid var(--border);
+  padding: 56px 0 36px;
+}
+.footer-inner {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 16px; text-align: center;
+}
+.footer-tagline {
+  font-family: var(--italic); font-style: italic;
+  font-size: 1rem; color: var(--text-2);
+}
+.footer-meta {
+  display: flex; gap: 24px; font-size: 0.78rem;
+  color: var(--text-dim); margin-top: 8px;
+  flex-wrap: wrap; justify-content: center;
+}
+.footer-meta a { transition: color var(--t-fast); }
+.footer-meta a:hover { color: var(--gold); }
+
+/* ============================================================
+   DISH MODAL
+   ============================================================ */
+.modal-bg {
+  position: fixed; inset: 0;
+  background: rgba(5,4,3,0.92);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  z-index: 2000; display: flex;
+  align-items: center; justify-content: center;
+  padding: 24px;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.35s var(--ease);
+}
+.modal-bg.open { opacity: 1; pointer-events: all; }
+.modal {
+  background: var(--bg-modal); border: 1px solid var(--border);
+  border-radius: 14px; max-width: 760px; width: 100%;
+  max-height: 90svh; overflow: hidden;
+  display: grid; grid-template-rows: 260px 1fr;
+  position: relative;
+  transform: translateY(30px) scale(0.96);
+  transition: transform 0.45s var(--ease-out);
+  box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+}
+.modal-bg.open .modal { transform: none; }
+
+.modal-close {
+  position: absolute; top: 16px; right: 16px;
+  width: 38px; height: 38px; border-radius: 50%;
+  background: rgba(0,0,0,0.6);
+  color: var(--text);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.95rem; z-index: 10;
+  transition: all var(--t-fast);
+}
+.modal-close:hover { background: rgba(0,0,0,0.9); transform: rotate(90deg); }
+
+.modal-visual { position: relative; overflow: hidden; }
+.modal-visual::before {
+  content: ''; position: absolute;
+  inset: 0; background: rgba(0,0,0,0.15);
+}
+.modal-visual::after {
+  content: ''; position: absolute;
+  bottom: 0; left: 0; right: 0; height: 60%;
+  background: linear-gradient(to top, var(--bg-modal), transparent);
+}
+.modal-visual-art {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.modal-visual-art svg {
+  width: 60%; max-width: 200px;
+  opacity: 0.4;
+  filter: drop-shadow(0 6px 14px rgba(0,0,0,0.4));
+}
+
+.modal-badges {
+  position: absolute; top: 20px; left: 20px; z-index: 5;
+  display: flex; gap: 6px; flex-wrap: wrap;
+}
+
+.modal-body {
+  overflow-y: auto;
+  padding: 32px 36px 36px;
+}
+.modal-cat {
+  font-size: 0.7rem; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--gold);
+  margin-bottom: 10px;
+}
+.modal-title {
+  font-family: var(--serif); font-size: 1.85rem;
+  font-weight: 700; line-height: 1.15;
+  margin-bottom: 16px;
+}
+.modal-desc {
+  color: var(--text-2); font-size: 1rem;
+  line-height: 1.75; margin-bottom: 28px;
+}
+.modal-meta {
+  display: flex; justify-content: space-between;
+  align-items: center; margin-bottom: 28px;
+  padding-bottom: 24px; border-bottom: 1px solid var(--border);
+}
+.modal-price {
+  font-family: var(--serif); font-size: 2.2rem;
+  font-weight: 800; color: var(--gold);
+  line-height: 1;
+}
+.allerg-title {
+  font-size: 0.7rem; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--text-dim);
+  margin-bottom: 14px; font-weight: 500;
+}
+.allerg-list { display: flex; gap: 8px; flex-wrap: wrap; }
+.allerg-chip {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 7px 14px; border-radius: 100px;
+  background: var(--bg-3); border: 1px solid var(--border);
+  font-size: 0.8rem; color: var(--text-2);
+  transition: all var(--t-fast);
+}
+.allerg-chip:hover { border-color: var(--border-gold); color: var(--text); }
+.allerg-chip-icon { font-size: 0.95rem; }
+.modal-note {
+  font-size: 0.78rem; color: var(--text-dim);
+  margin-top: 18px; font-style: italic;
+  display: flex; align-items: flex-start; gap: 8px;
+}
+.modal-note svg { width: 14px; height: 14px; margin-top: 3px; flex-shrink: 0; }
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 960px) {
+  .about-layout { grid-template-columns: 1fr; gap: 56px; }
+  .contact-layout { grid-template-columns: 1fr; gap: 40px; }
+  .map-block { min-height: 320px; }
+}
+@media (max-width: 720px) {
+  section { padding: 100px 0; }
+  .nav-links, .nav-cta { display: none; }
+  .burger { display: flex; }
+  .about-visual { grid-template-columns: 1fr 1fr; }
+  .stat:first-child { grid-column: 1 / -1; padding: 32px 24px; }
+  .stat:first-child .stat-num { font-size: 3.2rem; }
+  .form-row { grid-template-columns: 1fr; }
+  .modal { grid-template-rows: 180px 1fr; }
+  .modal-body { padding: 24px 24px 28px; }
+  .modal-title { font-size: 1.5rem; }
+  .modal-price { font-size: 1.8rem; }
+  .step-name { display: none; }
+  .step-line { max-width: 40px; }
+  .resa-form .form-actions { flex-wrap: wrap; }
+  .panel-actions .btn { flex: 1; min-width: 0; }
+}
+@media (max-width: 480px) {
+  .hero { padding: 120px 20px 80px; }
+  .menu-grid { grid-template-columns: 1fr; }
+  .about-visual { grid-template-columns: 1fr; }
+  .container { padding: 0 20px; }
+  .cal { padding: 20px; }
+  .nav-inner { padding: 0 20px; }
+  .ornament { max-width: 200px; }
+  .ornament svg { width: 24px; height: 24px; }
+}
+
+/* ============================================================
+   PRINT (carte imprimable)
+   ============================================================ */
+@media print {
+  body { background: white; color: black; }
+  #nav, .hero, .about, #contact, #reserver, footer, .modal-bg, .grain { display: none; }
+  #menu { padding: 20px; }
+  .dish { break-inside: avoid; border: 1px solid #ccc; box-shadow: none; background: white; color: black; }
+  .dish-name, .dish-price { color: black; }
+  .dish-desc { color: #444; }
+}
+</style>
 </head>
 <body>
 
-  <!-- Grain texture overlay -->
-  <div class="grain" aria-hidden="true"></div>
+<!-- Grain overlay -->
+<div class="grain"></div>
 
-  <!-- ============ NAVIGATION ============ -->
-  <nav id="navbar">
-    <div class="nav-inner">
-      <a class="nav-logo" href="#home">
-        <span class="logo-script">Le</span>
-        <span class="logo-bold">Vespa</span>
-      </a>
-      <button class="hamburger" id="hamburger" aria-label="Ouvrir le menu">
-        <span></span><span></span><span></span>
-      </button>
-      <ul class="nav-links" id="nav-links">
-        <li><a href="#home" class="nav-link active">Accueil</a></li>
-        <li><a href="#menu" class="nav-link">Menu</a></li>
-        <li><a href="#contact" class="nav-link">Contact</a></li>
-        <li><a href="#reservation" class="nav-link">Réserver</a></li>
-      </ul>
-    </div>
-  </nav>
-
-  <!-- Mobile overlay -->
-  <div class="mobile-overlay" id="mobile-overlay">
-    <button class="mobile-close" id="mobile-close" aria-label="Fermer">✕</button>
-    <nav class="mobile-nav">
-      <a href="#home" class="mobile-link">Accueil</a>
-      <a href="#menu" class="mobile-link">Menu</a>
-      <a href="#contact" class="mobile-link">Contact</a>
-      <a href="#reservation" class="mobile-link">Réserver</a>
-    </nav>
+<!-- ============ NAV ============ -->
+<nav id="nav">
+  <div class="nav-inner">
+    <a href="#top" class="logo">
+      <span class="logo-1">Le</span>
+      <span class="logo-2">Vespa</span>
+      <span class="logo-dot">·</span>
+    </a>
+    <button class="burger" id="burger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links">
+      <li><a href="#top" class="nav-link active">Accueil</a></li>
+      <li><a href="#menu" class="nav-link">Menu</a></li>
+      <li><a href="#contact" class="nav-link">Contact</a></li>
+      <li><a href="#reserver" class="nav-cta">Réserver</a></li>
+    </ul>
   </div>
+</nav>
 
-  <!-- ============ ACCUEIL ============ -->
-  <section id="home">
+<!-- Mobile menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#top" class="mm-link">Accueil</a>
+  <a href="#menu" class="mm-link">Menu</a>
+  <a href="#contact" class="mm-link">Contact</a>
+  <a href="#reserver" class="mm-link">Réserver</a>
+</div>
 
-    <!-- Hero -->
-    <div class="hero">
-      <div class="hero-content">
-        <p class="eyebrow reveal">Cucina Italiana · Bourg-en-Bresse</p>
-        <h1 class="hero-title reveal">
-          <em>Le</em>
-          <strong>Vespa</strong>
-        </h1>
-        <p class="hero-tagline reveal">Pâtes fraîches · Ravioli maison · Saveurs authentiques</p>
-        <div class="hero-actions reveal">
-          <a href="#reservation" class="btn btn-gold">Réserver une table</a>
-          <a href="#menu" class="btn btn-outline">Découvrir le menu</a>
+<!-- ============ HERO ============ -->
+<section class="hero" id="top">
+  <!-- Decorative Vespa SVG -->
+  <svg class="hero-bg-vespa" viewBox="0 0 600 350" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--gold)">
+    <path d="M120 250 C 120 220, 150 200, 180 200 L 200 200 C 230 200, 250 180, 250 150 L 250 120 C 250 100, 270 80, 300 80 L 380 80 C 410 80, 430 100, 430 130 L 430 180 C 430 220, 460 240, 490 240" stroke-linecap="round"/>
+    <circle cx="160" cy="270" r="40"/>
+    <circle cx="160" cy="270" r="22"/>
+    <circle cx="450" cy="270" r="40"/>
+    <circle cx="450" cy="270" r="22"/>
+    <path d="M250 120 L 320 60 L 360 70" stroke-linecap="round"/>
+    <path d="M340 120 Q 380 100, 420 130" stroke-linecap="round"/>
+    <ellipse cx="345" cy="180" rx="60" ry="35"/>
+    <path d="M395 195 L 430 195" stroke-linecap="round"/>
+  </svg>
+
+  <div class="hero-content">
+    <p class="hero-eyebrow reveal">Cucina Italiana · Bourg-en-Bresse</p>
+    <h1 class="hero-title reveal">
+      <span class="l1">Le</span>
+      <span class="l2">Vespa</span>
+    </h1>
+    <p class="hero-tag reveal">Pâtes fraîches · Ravioli maison · Saveurs authentiques</p>
+    <p class="hero-tag-2 reveal">depuis quelques années, on cuisine avec le cœur ♥</p>
+    <div class="hero-cta reveal">
+      <a href="#reserver" class="btn btn-gold">Réserver une table</a>
+      <a href="#menu" class="btn btn-outline">Voir le menu</a>
+    </div>
+  </div>
+  <div class="scroll-indicator">Défiler</div>
+</section>
+
+<!-- ============ ABOUT ============ -->
+<section class="about">
+  <div class="container">
+    <div class="about-layout">
+      <div class="about-text reveal">
+        <p class="eyebrow">Notre histoire</p>
+        <h2>L'authenticité italienne<br>au cœur de la <em>Bresse</em></h2>
+        <p class="about-body">
+          Chez Le Vespa, chaque assiette est une déclaration d'amour à la cuisine italienne.
+          Pâtes fraîches pétries chaque matin, sauces mijotées lentement, produits choisis
+          avec passion — nous cuisinons comme on cuisine chez la nonna, avec le feu en plus.
+        </p>
+        <p class="about-body">
+          Une carte vivante, qui change au gré des saisons et de l'humeur du chef. Ici,
+          pas de surgelé, pas d'industriel : juste du fait-maison, de la rigueur, et beaucoup
+          d'amour dans chaque plat qui sort du laboratoire.
+        </p>
+        <blockquote class="about-quote">« Qui va piano va sano »</blockquote>
+        <a href="#menu" class="btn btn-outline">Découvrir la carte</a>
+      </div>
+      <div class="about-visual reveal">
+        <div class="stat">
+          <span class="stat-num">15+</span>
+          <span class="stat-label">Pâtes fraîches<br>& Pasta classiques</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num">6</span>
+          <span class="stat-label">Ravioli<br>maison</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num">100<small style="font-size: 1.8rem">%</small></span>
+          <span class="stat-label">Fait maison<br>chaque jour</span>
         </div>
       </div>
-      <div class="hero-scroll-indicator">
-        <span>Défiler</span>
-        <div class="scroll-line"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MENU ============ -->
+<section id="menu">
+  <div class="container">
+    <div class="section-head reveal">
+      <p class="eyebrow">À la carte</p>
+      <h2>Notre <em>Menu</em></h2>
+      <p class="section-sub">Cliquez sur un plat pour découvrir la composition complète, les allergènes et le prix détaillé.</p>
+      <div class="ornament">
+        <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M16 4 L 19 14 L 28 16 L 19 18 L 16 28 L 13 18 L 4 16 L 13 14 Z"/>
+        </svg>
       </div>
     </div>
 
-    <!-- À propos -->
-    <div class="about">
-      <div class="container">
-        <div class="about-layout">
-          <div class="about-text reveal">
-            <p class="eyebrow">Notre histoire</p>
-            <h2>L'authenticité italienne<br>au cœur de la <em>Bresse</em></h2>
-            <p class="about-body">
-              Chez Le Vespa, chaque assiette est une déclaration d'amour à la cuisine italienne.
-              Pâtes fraîches pétries chaque matin, sauces mijotées lentement, produits sélectionnés
-              avec passion — nous cuisons comme on cuisine chez grand-mère, avec le feu en plus.
-            </p>
-            <blockquote class="about-quote">
-              « Qui va piano va sano »
-            </blockquote>
-            <a href="#menu" class="btn btn-outline">Voir le menu complet</a>
+    <div class="menu-tabs reveal">
+      <button class="tab active" data-cat="pasta">Pasta & Basta</button>
+      <button class="tab" data-cat="ravioli">Ravioli & Cie</button>
+      <button class="tab" data-cat="risotto">Risotto</button>
+      <button class="tab" data-cat="desserts">Dolcetissime</button>
+    </div>
+
+    <p class="cat-tagline" id="catTagline"></p>
+
+    <div class="menu-grid" id="menuGrid"></div>
+
+    <div class="menu-note" id="burrataNote">
+      <span class="note-icon">♥</span>
+      <p>Coup de cœur de Lili — ajoutez une <strong>burrata fondante</strong> sur n'importe quelle pasta de votre choix <strong>+ 5,00 €</strong></p>
+    </div>
+
+    <div class="menu-print">
+      <button class="btn btn-ghost" onclick="window.print()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><path d="M6 14h12v8H6z"/></svg>
+        Imprimer la carte
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CONTACT ============ -->
+<section id="contact">
+  <div class="container">
+    <div class="section-head reveal">
+      <p class="eyebrow">Venez nous voir</p>
+      <h2>Nous <em>trouver</em></h2>
+      <p class="section-sub">Au cœur de Bourg-en-Bresse, à deux pas du centre-ville. Réservation conseillée le week-end.</p>
+    </div>
+
+    <div class="contact-layout">
+      <div class="contact-info reveal">
+        <div class="contact-item">
+          <div class="contact-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
           </div>
-          <div class="about-stats reveal">
-            <div class="stat-card">
-              <span class="stat-num">15+</span>
-              <span class="stat-label">Pasta<br>& Basta</span>
-            </div>
-            <div class="stat-card">
-              <span class="stat-num">6</span>
-              <span class="stat-label">Ravioli<br>maison</span>
-            </div>
-            <div class="stat-card">
-              <span class="stat-num">100%</span>
-              <span class="stat-label">Fait maison<br>chaque jour</span>
-            </div>
+          <div>
+            <p class="contact-label">Adresse</p>
+            <p class="contact-value">7 Rue des Bresses<br>01000 Bourg-en-Bresse</p>
           </div>
         </div>
-      </div>
-    </div>
-
-  </section>
-
-  <!-- ============ MENU ============ -->
-  <section id="menu">
-    <div class="container">
-      <div class="section-header reveal">
-        <p class="eyebrow">À la carte</p>
-        <h2>Notre <em>Menu</em></h2>
-        <p class="section-sub">Cliquez sur un plat pour découvrir la composition et les allergènes</p>
-      </div>
-
-      <!-- Tabs -->
-      <div class="menu-tabs reveal">
-        <button class="tab active" data-cat="pasta">Pasta & Basta</button>
-        <button class="tab" data-cat="ravioli">Ravioli & Cie</button>
-        <button class="tab" data-cat="risotto">Risotto</button>
-        <button class="tab" data-cat="desserts">Dolcetissime</button>
-      </div>
-
-      <!-- Category tagline -->
-      <p class="cat-tagline" id="cat-tagline"></p>
-
-      <!-- Dish grid -->
-      <div class="menu-grid" id="menu-grid"></div>
-
-      <!-- Burrata add-on note -->
-      <div class="menu-note reveal" id="menu-note-pasta">
-        <span class="note-icon">❤</span>
-        <p>Coup de cœur de Lili — ajoutez une burrata sur n'importe quelle pasta de votre choix <strong>+5,00&nbsp;€</strong></p>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ CONTACT ============ -->
-  <section id="contact">
-    <div class="container">
-      <div class="section-header reveal">
-        <p class="eyebrow">Venez nous voir</p>
-        <h2>Nous <em>trouver</em></h2>
-      </div>
-      <div class="contact-layout">
-        <div class="contact-info reveal">
-          <div class="contact-item">
-            <div class="contact-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
-            </div>
-            <div>
-              <p class="contact-label">Adresse</p>
-              <p class="contact-value">7 Rue des Bresses<br>01000 Bourg-en-Bresse</p>
-            </div>
+        <div class="contact-item">
+          <div class="contact-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.13.96.36 1.9.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0122 16.92z"/></svg>
           </div>
-          <div class="contact-item">
-            <div class="contact-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8a19.79 19.79 0 01-3.07-8.68A2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.16 6.16l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
-            </div>
-            <div>
-              <p class="contact-label">Téléphone</p>
-              <a class="contact-value contact-link" href="tel:+33474000000">04 74 00 00 00</a>
-            </div>
+          <div>
+            <p class="contact-label">Téléphone</p>
+            <a class="contact-value contact-link" href="tel:+33474000000">04 74 00 00 00</a>
           </div>
-          <div class="contact-item">
-            <div class="contact-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-            </div>
-            <div>
-              <p class="contact-label">Email</p>
-              <a class="contact-value contact-link" href="mailto:contact@levespa-bourg.fr">contact@levespa-bourg.fr</a>
-            </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 6 10-6"/></svg>
           </div>
-          <div class="contact-item contact-item--hours">
-            <div class="contact-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>
-            </div>
-            <div>
-              <p class="contact-label">Horaires</p>
+          <div>
+            <p class="contact-label">Email</p>
+            <a class="contact-value contact-link" href="mailto:contact@levespa-bourg.fr">contact@levespa-bourg.fr</a>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          </div>
+          <div>
+            <p class="contact-label">Horaires</p>
+            <div class="contact-value">
               <div class="hours-grid">
                 <span>Mar – Ven</span><span>12h–14h · 19h–22h</span>
                 <span>Samedi</span><span>12h–14h · 19h–22h30</span>
@@ -186,171 +1285,688 @@
             </div>
           </div>
         </div>
-        <div class="map-block reveal">
-          <div class="map-placeholder">
-            <div class="map-pin-icon">📍</div>
-            <p class="map-city">Bourg-en-Bresse</p>
-            <p class="map-addr">01000 · Ain · Auvergne-Rhône-Alpes</p>
-            <a class="btn btn-outline btn-sm" href="https://maps.google.com/?q=Bourg-en-Bresse" target="_blank" rel="noopener">Ouvrir dans Google Maps</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ RÉSERVATION ============ -->
-  <section id="reservation">
-    <div class="container">
-      <div class="section-header reveal">
-        <p class="eyebrow">Votre table vous attend</p>
-        <h2><em>Réserver</em></h2>
       </div>
 
-      <div class="resa-wrapper" id="resa-wrapper">
-        <!-- Step indicators -->
-        <div class="resa-steps">
-          <div class="resa-step-dot active" data-step="1">
-            <span class="step-num">1</span>
-            <span class="step-label">Date</span>
-          </div>
-          <div class="step-connector"></div>
-          <div class="resa-step-dot" data-step="2">
-            <span class="step-num">2</span>
-            <span class="step-label">Horaire</span>
-          </div>
-          <div class="step-connector"></div>
-          <div class="resa-step-dot" data-step="3">
-            <span class="step-num">3</span>
-            <span class="step-label">Coordonnées</span>
-          </div>
+      <div class="map-block reveal">
+        <div class="map-pin">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5a2.5 2.5 0 010-5 2.5 2.5 0 010 5z"/></svg>
         </div>
-
-        <!-- Step 1: Calendar -->
-        <div class="resa-panel active" id="panel-1">
-          <h3 class="panel-title">Choisissez une date</h3>
-          <div class="calendar-header">
-            <button class="cal-nav-btn" id="cal-prev" aria-label="Mois précédent">‹</button>
-            <span class="cal-month" id="cal-month-label"></span>
-            <button class="cal-nav-btn" id="cal-next" aria-label="Mois suivant">›</button>
-          </div>
-          <div class="calendar-weekdays">
-            <span>Lun</span><span>Mar</span><span>Mer</span><span>Jeu</span><span>Ven</span><span>Sam</span><span>Dim</span>
-          </div>
-          <div class="calendar-grid" id="calendar-grid"></div>
-          <p class="cal-legend">Les dimanches et lundis, nous sommes fermés.</p>
-        </div>
-
-        <!-- Step 2: Time + Covers -->
-        <div class="resa-panel" id="panel-2">
-          <h3 class="panel-title">Horaire & convives</h3>
-          <div class="selected-date-display" id="selected-date-display"></div>
-          <div class="covers-section">
-            <p class="covers-label">Nombre de personnes</p>
-            <div class="covers-btns">
-              <button class="cover-btn" data-covers="1">1</button>
-              <button class="cover-btn active" data-covers="2">2</button>
-              <button class="cover-btn" data-covers="3">3</button>
-              <button class="cover-btn" data-covers="4">4</button>
-              <button class="cover-btn" data-covers="5">5</button>
-              <button class="cover-btn" data-covers="6">6+</button>
-            </div>
-          </div>
-          <div class="slots-section">
-            <p class="slots-period-label">🌞 Midi</p>
-            <div class="slots-grid" id="slots-midi"></div>
-            <p class="slots-period-label">🌙 Soir</p>
-            <div class="slots-grid" id="slots-soir"></div>
-          </div>
-          <div class="panel-actions">
-            <button class="btn btn-ghost" id="back-1">← Retour</button>
-          </div>
-        </div>
-
-        <!-- Step 3: Form -->
-        <div class="resa-panel" id="panel-3">
-          <h3 class="panel-title">Vos coordonnées</h3>
-          <div class="booking-summary" id="booking-summary"></div>
-          <form class="resa-form" id="resa-form" novalidate>
-            <div class="form-row">
-              <div class="form-group">
-                <label for="f-prenom">Prénom *</label>
-                <input type="text" id="f-prenom" name="prenom" placeholder="Jean" required autocomplete="given-name">
-              </div>
-              <div class="form-group">
-                <label for="f-nom">Nom *</label>
-                <input type="text" id="f-nom" name="nom" placeholder="Dupont" required autocomplete="family-name">
-              </div>
-            </div>
-            <div class="form-row">
-              <div class="form-group">
-                <label for="f-tel">Téléphone *</label>
-                <input type="tel" id="f-tel" name="tel" placeholder="06 12 34 56 78" required autocomplete="tel">
-              </div>
-              <div class="form-group">
-                <label for="f-email">Email</label>
-                <input type="email" id="f-email" name="email" placeholder="jean@mail.fr" autocomplete="email">
-              </div>
-            </div>
-            <div class="form-group">
-              <label for="f-message">Message (allergie, occasion spéciale…)</label>
-              <textarea id="f-message" name="message" rows="3" placeholder="Vos remarques…"></textarea>
-            </div>
-            <div class="form-actions">
-              <button type="button" class="btn btn-ghost" id="back-2">← Retour</button>
-              <button type="submit" class="btn btn-gold">Confirmer la réservation</button>
-            </div>
-          </form>
-        </div>
-      </div>
-
-      <!-- Confirmation -->
-      <div class="resa-confirmation" id="resa-confirmation">
-        <div class="conf-check">✓</div>
-        <h3>Réservation confirmée !</h3>
-        <p class="conf-details" id="conf-details"></p>
-        <p class="conf-sub">Un rappel vous sera envoyé 24h avant votre repas. À très bientôt !</p>
-        <button class="btn btn-outline" id="new-resa-btn">Nouvelle réservation</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ FOOTER ============ -->
-  <footer>
-    <div class="container">
-      <div class="footer-inner">
-        <div class="footer-logo">
-          <span class="logo-script">Le</span>
-          <span class="logo-bold">Vespa</span>
-        </div>
-        <p class="footer-tagline">Cucina Italiana · Bourg-en-Bresse</p>
-        <p class="footer-copy">© 2025 Le Vespa — Tous droits réservés</p>
-      </div>
-    </div>
-  </footer>
-
-  <!-- ============ DISH MODAL ============ -->
-  <div class="modal-overlay" id="modal-overlay" role="dialog" aria-modal="true" aria-hidden="true">
-    <div class="modal" id="modal">
-      <button class="modal-close" id="modal-close" aria-label="Fermer">✕</button>
-      <div class="modal-visual" id="modal-visual">
-        <div class="modal-badge-wrap" id="modal-badge-wrap"></div>
-      </div>
-      <div class="modal-body">
-        <p class="modal-category" id="modal-category"></p>
-        <h2 class="modal-title" id="modal-title"></h2>
-        <p class="modal-desc" id="modal-desc"></p>
-        <div class="modal-price-row">
-          <span class="modal-price" id="modal-price"></span>
-        </div>
-        <div class="modal-allergens-block" id="modal-allergens-block">
-          <p class="allergens-title">Allergènes</p>
-          <div class="allergens-list" id="modal-allergens"></div>
-        </div>
-        <p class="modal-allergen-note">ⓘ Pour toute allergie non listée, parlez-en à notre équipe.</p>
+        <p class="map-city">Bourg-en-Bresse</p>
+        <p class="map-addr">01000 · Ain · Auvergne-Rhône-Alpes</p>
+        <a class="btn btn-outline" href="https://maps.google.com/?q=Bourg-en-Bresse" target="_blank" rel="noopener">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          Ouvrir dans Maps
+        </a>
       </div>
     </div>
   </div>
+</section>
 
-  <script src="js/app.js"></script>
+<!-- ============ RÉSERVATION ============ -->
+<section id="reserver">
+  <div class="container">
+    <div class="section-head reveal">
+      <p class="eyebrow">Votre table vous attend</p>
+      <h2><em>Réserver</em> en ligne</h2>
+      <p class="section-sub">Réservez votre table en moins d'une minute. Confirmation immédiate, rappel par SMS 24h avant votre repas.</p>
+    </div>
+
+    <div class="resa" id="resa">
+      <!-- Step indicators -->
+      <div class="steps">
+        <div class="step active" data-step="1">
+          <div class="step-circle"><span class="num">1</span></div>
+          <span class="step-name">Date</span>
+        </div>
+        <div class="step-line" id="line1"></div>
+        <div class="step" data-step="2">
+          <div class="step-circle"><span class="num">2</span></div>
+          <span class="step-name">Horaire</span>
+        </div>
+        <div class="step-line" id="line2"></div>
+        <div class="step" data-step="3">
+          <div class="step-circle"><span class="num">3</span></div>
+          <span class="step-name">Coordonnées</span>
+        </div>
+      </div>
+
+      <!-- Panel 1: Calendar -->
+      <div class="panel active" id="panel1">
+        <h3 class="panel-title">Choisissez une <em>date</em></h3>
+        <div class="cal">
+          <div class="cal-head">
+            <button class="cal-nav" id="calPrev" aria-label="Mois précédent">‹</button>
+            <span class="cal-month" id="calMonth"></span>
+            <button class="cal-nav" id="calNext" aria-label="Mois suivant">›</button>
+          </div>
+          <div class="cal-weekdays">
+            <span>Lun</span><span>Mar</span><span>Mer</span><span>Jeu</span><span>Ven</span><span>Sam</span><span>Dim</span>
+          </div>
+          <div class="cal-grid" id="calGrid"></div>
+          <p class="cal-legend">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+            Nous sommes fermés les dimanches et lundis.
+          </p>
+        </div>
+      </div>
+
+      <!-- Panel 2: Time + Covers -->
+      <div class="panel" id="panel2">
+        <h3 class="panel-title"><em>Horaire</em> & convives</h3>
+        <div class="date-shown" id="dateShown"></div>
+
+        <div class="field">
+          <p class="field-label">Nombre de personnes</p>
+          <div class="covers">
+            <button class="cover" data-c="1">1</button>
+            <button class="cover active" data-c="2">2</button>
+            <button class="cover" data-c="3">3</button>
+            <button class="cover" data-c="4">4</button>
+            <button class="cover" data-c="5">5</button>
+            <button class="cover" data-c="6">6+</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <p class="slot-period">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+            Service du midi
+          </p>
+          <div class="slots" id="slotsMidi"></div>
+
+          <p class="slot-period" style="margin-top: 32px">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+            Service du soir
+          </p>
+          <div class="slots" id="slotsSoir"></div>
+        </div>
+
+        <div class="panel-actions">
+          <button class="btn btn-ghost" data-back="1">← Changer de date</button>
+        </div>
+      </div>
+
+      <!-- Panel 3: Form -->
+      <div class="panel" id="panel3">
+        <h3 class="panel-title">Vos <em>coordonnées</em></h3>
+        <div class="booking-summary">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L15 8L22 9L17 14L18 21L12 18L6 21L7 14L2 9L9 8z"/></svg>
+          <div id="bookingSummary"></div>
+        </div>
+        <form class="resa-form" id="resaForm" novalidate>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="prenom">Prénom *</label>
+              <input type="text" id="prenom" placeholder="Jean" required autocomplete="given-name">
+            </div>
+            <div class="form-group">
+              <label for="nom">Nom *</label>
+              <input type="text" id="nom" placeholder="Dupont" required autocomplete="family-name">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="tel">Téléphone *</label>
+              <input type="tel" id="tel" placeholder="06 12 34 56 78" required autocomplete="tel">
+            </div>
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input type="email" id="email" placeholder="jean@email.fr" autocomplete="email">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="msg">Message (allergie, occasion spéciale…)</label>
+            <textarea id="msg" rows="3" placeholder="Anniversaire, allergie, demande particulière…"></textarea>
+          </div>
+          <div class="panel-actions">
+            <button type="button" class="btn btn-ghost" data-back="2">← Retour</button>
+            <button type="submit" class="btn btn-gold">Confirmer la réservation</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Confirmation -->
+      <div class="confirmation" id="confirmation">
+        <div class="conf-check">✓</div>
+        <h3>Réservation confirmée !</h3>
+        <p class="conf-sub">Merci de votre confiance. Nous avons hâte de vous accueillir au Vespa.</p>
+        <div class="conf-details" id="confDetails"></div>
+        <p class="conf-sub">Un rappel par SMS vous sera envoyé 24h avant votre repas.<br>Pour toute modification, appelez-nous au <a href="tel:+33474000000" style="color: var(--gold)">04 74 00 00 00</a>.</p>
+        <button class="btn btn-outline" id="newResa">Nouvelle réservation</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <div class="logo">
+        <span class="logo-1">Le</span>
+        <span class="logo-2">Vespa</span>
+      </div>
+      <p class="footer-tagline">« Qui va piano va sano »</p>
+      <div class="footer-meta">
+        <a href="tel:+33474000000">04 74 00 00 00</a>
+        <span>·</span>
+        <a href="mailto:contact@levespa-bourg.fr">contact@levespa-bourg.fr</a>
+        <span>·</span>
+        <span>7 Rue des Bresses · 01000 Bourg-en-Bresse</span>
+      </div>
+      <p style="font-size: 0.72rem; color: var(--text-dim); margin-top: 12px;">© 2025 Le Vespa — Tous droits réservés · Site démo</p>
+    </div>
+  </div>
+</footer>
+
+<!-- ============ MODAL ============ -->
+<div class="modal-bg" id="modalBg" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="modal" id="modal">
+    <button class="modal-close" id="modalClose" aria-label="Fermer">✕</button>
+    <div class="modal-visual" id="modalVisual">
+      <div class="modal-badges" id="modalBadges"></div>
+      <div class="modal-visual-art" id="modalArt"></div>
+    </div>
+    <div class="modal-body">
+      <p class="modal-cat" id="modalCat"></p>
+      <h2 class="modal-title" id="modalTitle"></h2>
+      <p class="modal-desc" id="modalDesc"></p>
+      <div class="modal-meta">
+        <span class="modal-price" id="modalPrice"></span>
+      </div>
+      <p class="allerg-title">Allergènes à signaler</p>
+      <div class="allerg-list" id="modalAllerg"></div>
+      <p class="modal-note">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+        Pour toute allergie ou intolérance non listée, parlez-en à notre équipe.
+      </p>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   DATA
+   ============================================================ */
+
+const ALLERGENS = {
+  1:  { icon: '🌾', name: 'Gluten' },
+  2:  { icon: '🦐', name: 'Crustacés' },
+  3:  { icon: '🥚', name: 'Œufs' },
+  4:  { icon: '🐟', name: 'Poisson' },
+  5:  { icon: '🥜', name: 'Arachides' },
+  6:  { icon: '🫘', name: 'Soja' },
+  7:  { icon: '🥛', name: 'Lait' },
+  8:  { icon: '🌰', name: 'Fruits à coque' },
+  9:  { icon: '🌿', name: 'Céleri' },
+  10: { icon: '🌻', name: 'Moutarde' },
+  11: { icon: '⚪', name: 'Sésame' },
+  12: { icon: '🍷', name: 'Sulfites' },
+  13: { icon: '🌱', name: 'Lupin' },
+  14: { icon: '🐚', name: 'Mollusques' }
+};
+
+const GRADIENTS = {
+  tomato:       'radial-gradient(circle at 30% 30%, #e07060 0%, #b8362a 35%, #5a1010 80%)',
+  'tomato-meat':'radial-gradient(circle at 30% 30%, #c87060 0%, #8a3a20 35%, #3a1505 80%)',
+  cream:        'radial-gradient(circle at 30% 30%, #e8d4a0 0%, #b8924a 35%, #4a3520 80%)',
+  verde:        'radial-gradient(circle at 30% 30%, #6fb86a 0%, #2d7a35 35%, #0a2010 80%)',
+  med:          'radial-gradient(circle at 30% 30%, #60a8d0 0%, #2870a0 35%, #082040 80%)',
+  pesto:        'radial-gradient(circle at 30% 30%, #95c060 0%, #4a8025 35%, #102008 80%)',
+  gorg:         'radial-gradient(circle at 30% 30%, #a0c070 0%, #5a7a35 35%, #1a2010 80%)',
+  carbonara:    'radial-gradient(circle at 30% 30%, #e0b070 0%, #a07030 35%, #2a1a08 80%)',
+  salmon:       'radial-gradient(circle at 30% 30%, #e89888 0%, #b05848 35%, #3a1810 80%)',
+  truffle:      'radial-gradient(circle at 30% 30%, #8a7050 0%, #5a4530 35%, #1a1208 80%)',
+  seafood:      'radial-gradient(circle at 30% 30%, #50a0d8 0%, #2065a0 35%, #061a3a 80%)',
+  special:      'radial-gradient(circle at 30% 30%, #a880c0 0%, #6840a0 35%, #1a0a30 80%)',
+  dessert:      'radial-gradient(circle at 30% 30%, #c87090 0%, #8a3550 35%, #2a0a18 80%)'
+};
+
+const SWATCHES = {
+  tomato:        'linear-gradient(90deg, #e07060, #b8362a)',
+  'tomato-meat': 'linear-gradient(90deg, #c87060, #8a3a20)',
+  cream:         'linear-gradient(90deg, #e8d4a0, #b8924a)',
+  verde:         'linear-gradient(90deg, #6fb86a, #2d7a35)',
+  med:           'linear-gradient(90deg, #60a8d0, #2870a0)',
+  pesto:         'linear-gradient(90deg, #95c060, #4a8025)',
+  gorg:          'linear-gradient(90deg, #a0c070, #5a7a35)',
+  carbonara:     'linear-gradient(90deg, #e0b070, #a07030)',
+  salmon:        'linear-gradient(90deg, #e89888, #b05848)',
+  truffle:       'linear-gradient(90deg, #8a7050, #5a4530)',
+  seafood:       'linear-gradient(90deg, #50a0d8, #2065a0)',
+  special:       'linear-gradient(90deg, #a880c0, #6840a0)',
+  dessert:       'linear-gradient(90deg, #c87090, #8a3550)'
+};
+
+// SVG art for dish modal (decorative plate/garnish)
+const PLATE_SVG = `
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="white" stroke-width="1.5" opacity="0.6">
+  <circle cx="100" cy="100" r="80" stroke-opacity="0.5"/>
+  <circle cx="100" cy="100" r="65" stroke-opacity="0.3"/>
+  <path d="M70 95 Q 100 75, 130 95 Q 100 115, 70 95 Z" fill="white" fill-opacity="0.15"/>
+  <circle cx="85" cy="90" r="4" fill="white" fill-opacity="0.4"/>
+  <circle cx="115" cy="105" r="4" fill="white" fill-opacity="0.4"/>
+  <circle cx="100" cy="95" r="3" fill="white" fill-opacity="0.4"/>
+  <path d="M60 130 Q 75 145, 95 138" stroke-opacity="0.4"/>
+</svg>`;
+
+const MENU = {
+  pasta: {
+    label: 'Pasta & Basta',
+    tagline: '« La pasta è vita — la pâte, c\'est la vie »',
+    items: [
+      { name:'Penne Napolitaine ou Arrabbiata', desc:'Sauce tomate maison mijotée lentement, origan frais, basilic du jardin. Avec ou sans piment selon votre envie.', price:12.50, allergens:[1], gradient:'tomato', badge:'Végétarien', badgeType:'vege' },
+      { name:'Penne Amatriciana', desc:'Sauce napolitaine maison, lardons fumés croustillants, piment rouge. Le goût authentique de Rome dans votre assiette.', price:13.00, allergens:[1], gradient:'tomato-meat' },
+      { name:'Penne Broccoli', desc:'Brocolis croquants, huile d\'olive extra-vierge pressée à froid, ail rôti, piment doux, guanciale croustillant.', price:13.50, allergens:[1], gradient:'verde' },
+      { name:'Penne Caccio é Pépé', desc:'Crème fraîche onctueuse, poivre noir concassé généreux, pecorino romano affiné 18 mois, persil frais. La grande tradition romaine.', price:13.80, allergens:[1,7], gradient:'cream', badge:'Végétarien', badgeType:'vege' },
+      { name:'Penne Del Sole', desc:'Légumes du soleil rôtis, huile d\'olive, olives noires de Kalamata, câpres de Pantelleria, ail, persil. La Méditerranée en assiette.', price:14.00, allergens:[1], gradient:'med', badge:'Végétarien', badgeType:'vege' },
+      { name:'Penne Carciofi', desc:'Artichaut à la romana, lardons fumés, sauce napolitaine maison, persil frais. Doux et caractère.', price:14.80, allergens:[1], gradient:'tomato-meat' },
+      { name:'Penne Pesto & sa Burrata', desc:'Crème, pesto de basilic frais pilé au mortier, pignons de pin torréfiés, piment d\'Espelette, basilic — couronné d\'une burrata fondante.', price:17.50, allergens:[1,7,8], gradient:'pesto', badge:'Végétarien', badgeType:'vege' },
+      { name:'Penne Gorgonzola', desc:'Gorgonzola DOP fondant, crème fraîche, pistaches concassées de Bronte. Un accord audacieux et profond.', price:17.80, allergens:[1,7,8], gradient:'gorg', badge:'Végétarien', badgeType:'vege' },
+      { name:'Linguine Carpasio', desc:'Huile d\'olive pressée à froid, tomates cerises fraîches et séchées au soleil, dés d\'asiago affiné. Simple, vrai, remarquable.', price:14.80, allergens:[1,7], gradient:'tomato', badge:'Végétarien', badgeType:'vege' },
+      { name:'Linguine Carbonara Pomodoro', desc:'Jaune d\'œuf fermier, crème fraîche, parmesan reggiano 24 mois, tomates cerises fraîches et séchées, persil. La carbonara revisitée.', price:17.00, allergens:[1,3,7], gradient:'carbonara' },
+      { name:'Linguine Carbonara à l\'Italienne', desc:'Jaune d\'œuf, guanciale affiné, parmesan 24 mois, poivre noir fraîchement concassé, persil. La recette authentique romaine, sans crème.', price:17.00, allergens:[1,3,7], gradient:'carbonara' },
+      { name:'Linguine Carbonara au Chorizo', desc:'Jaune d\'œuf, crème, chorizo ibérique fumé, parmesan reggiano, persil. Du caractère ibérique dans une recette transalpine.', price:17.00, allergens:[1,3,7], gradient:'carbonara' },
+      { name:'Linguine Carbonara Bressane', desc:'Jaune d\'œuf, crème fraîche, lardons fermiers de la Bresse, parmesan 24 mois, persil. Notre hommage savoureux au terroir local.', price:17.00, allergens:[1,3,7], gradient:'carbonara', badge:'Notre région', badgeType:'chef' },
+      { name:'Linguine Al Limone', desc:'Citron frais, saumon fumé d\'Écosse, beurre demi-sel, vodka, poivre concassé, crème fouettée maison. Élégant, vif, surprenant.', price:17.80, allergens:[1,4,7], gradient:'salmon', badge:'Chef\'s pick', badgeType:'chef' },
+      { name:'Linguine Tartufo', desc:'Pesto de truffes noires du Périgord, crème fraîche onctueuse, copeaux de parmesan reggiano 24 mois. Le luxe discret.', price:18.00, allergens:[1,7,8], gradient:'truffle', badge:'Premium', badgeType:'chef' }
+    ]
+  },
+  ravioli: {
+    label: 'Ravioli & Compagnie',
+    tagline: '« Fatto a mano ogni giorno — fait à la main chaque jour »',
+    items: [
+      { name:'Gnochi Spinaci', desc:'Gnocchis maison généreux, crème d\'épinard onctueuse, chorizo fondant, cerneaux de noix grillés. Réconfort italien.', price:16.80, allergens:[8], gradient:'verde' },
+      { name:'Gratin de Raviolini au Poulet', desc:'Raviolini gratinés au four, crème de moutarde à l\'ancienne, échalotes fondantes confites. Réconfort absolu.', price:17.50, allergens:[1,3,10], gradient:'cream' },
+      { name:'Ravioli Bœuf Braisé', desc:'Ravioli farcis au bœuf longuement braisé, sauce napolitaine maison mijotée, aubergines rôties, dés d\'asiago affiné.', price:18.00, allergens:[1,3], gradient:'tomato-meat' },
+      { name:'Tortelli Végé', desc:'Tortelli aux légumes du moment, sauce napolitaine, crème fraîche, brocolis al dente, dés d\'asiago fondants.', price:18.00, allergens:[1,3,7], gradient:'verde', badge:'Végétarien', badgeType:'vege' },
+      { name:'Le Vespa', desc:'La création signature du Chef, changeante au gré de l\'humeur et des saisons. Une surprise garantie — interrogez notre équipe sur la composition du jour.', price:19.50, allergens:[1,3], gradient:'special', badge:'Signature', badgeType:'chef' },
+      { name:'Malfatti au St-Jacques', desc:'Malfatti frais pétris ici-même, crème légère, pesto d\'agrumes vif, chorizo croustillant, noix de Saint-Jacques poêlées.', price:21.00, allergens:[1,3,14], gradient:'seafood', badge:'Coup de cœur', badgeType:'chef' }
+    ]
+  },
+  risotto: {
+    label: 'Risotto',
+    tagline: '« Qui va piano va sano — lentement mais sûrement »',
+    items: [
+      { name:'Risotto Verde', desc:'Carnaroli mantecato, mascarpone crémeux, épinards frais, copeaux de parmesan 24 mois, cerneaux de noix torréfiés. Profond et végétal.', price:17.00, allergens:[7,8], gradient:'verde', badge:'Végétarien', badgeType:'vege' },
+      { name:'Risotto Selon l\'Humeur du Chef', desc:'La création du jour, composée selon l\'arrivage du marché et l\'inspiration du moment. Interrogez notre équipe pour la composition du jour.', price:18.50, allergens:[1,2,4,5,7,8,9,14], gradient:'special', badge:'Créatif', badgeType:'chef' }
+    ]
+  },
+  desserts: {
+    label: 'Dolcetissime',
+    tagline: '« La dolce vita comincia qui — la belle vie commence ici »',
+    items: [
+      { name:'Dessert Maison du Jour', desc:'La création du moment selon l\'humeur du chef pâtissier — tiramisu, panna cotta, fondant au chocolat ou tarte maison. Laissez-vous surprendre.', price:7.80, allergens:[1,3,7,8], gradient:'dessert', badge:'Fait maison', badgeType:'chef' }
+    ]
+  }
+};
+
+const MOIS_FR = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+const JOURS_FR = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+
+const state = {
+  cat: 'pasta',
+  date: null,
+  covers: 2,
+  slot: null,
+  step: 1,
+  calY: new Date().getFullYear(),
+  calM: new Date().getMonth()
+};
+
+const $ = id => document.getElementById(id);
+const $$ = sel => document.querySelectorAll(sel);
+
+/* ---- Navigation ---- */
+function initNav() {
+  const nav = $('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 60);
+  }, { passive: true });
+
+  const burger = $('burger'), mm = $('mobileMenu');
+  burger.addEventListener('click', () => {
+    burger.classList.toggle('open');
+    mm.classList.toggle('open');
+    document.body.style.overflow = mm.classList.contains('open') ? 'hidden' : '';
+  });
+  $$('.mm-link').forEach(l => l.addEventListener('click', () => {
+    burger.classList.remove('open');
+    mm.classList.remove('open');
+    document.body.style.overflow = '';
+  }));
+
+  // Active section in nav
+  const links = $$('.nav-link, .nav-cta');
+  const sections = ['top','menu','contact','reserver'];
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const id = e.target.id;
+        const link = document.querySelector(`a[href="#${id}"]`);
+        if (link) link.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-40% 0px -55% 0px' });
+  sections.forEach(id => {
+    const el = $(id);
+    if (el) obs.observe(el);
+  });
+}
+
+/* ---- Reveal ---- */
+function initReveal() {
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        obs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  $$('.reveal').forEach(el => obs.observe(el));
+}
+
+/* ---- Menu ---- */
+function initMenu() {
+  $$('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      $$('.tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      state.cat = tab.dataset.cat;
+      renderMenu();
+    });
+  });
+  renderMenu();
+}
+
+function renderMenu() {
+  const grid = $('menuGrid');
+  const tagline = $('catTagline');
+  const note = $('burrataNote');
+  const cat = MENU[state.cat];
+
+  tagline.style.opacity = 0;
+  setTimeout(() => {
+    tagline.textContent = cat.tagline;
+    tagline.style.opacity = 1;
+  }, 150);
+
+  note.style.display = state.cat === 'pasta' ? '' : 'none';
+
+  grid.innerHTML = '';
+  cat.items.forEach((dish, i) => {
+    const card = document.createElement('div');
+    card.className = 'dish reveal';
+    card.style.transitionDelay = `${i * 0.04}s`;
+    card.innerHTML = `
+      <div class="dish-swatch" style="background: ${SWATCHES[dish.gradient]}"></div>
+      ${dish.badge ? `<span class="badge b-${dish.badgeType}">${dish.badge}</span>` : ''}
+      <div class="dish-top">
+        <p class="dish-name">${dish.name}</p>
+        <span class="dish-price">${formatPrice(dish.price)}</span>
+      </div>
+      <p class="dish-desc">${dish.desc}</p>
+      <div class="dish-bottom">
+        <div class="dish-allergens">
+          ${dish.allergens.map(n => `<span class="allergen-dot" title="${ALLERGENS[n]?.name || ''}">${n}</span>`).join('')}
+        </div>
+        <span class="dish-cta">Détails →</span>
+      </div>
+    `;
+    card.addEventListener('click', () => openModal(dish, cat.label));
+    grid.appendChild(card);
+
+    setTimeout(() => card.classList.add('in'), 50 + i * 40);
+  });
+}
+
+function formatPrice(p) {
+  return p.toFixed(2).replace('.', ',') + ' €';
+}
+
+/* ---- Modal ---- */
+function openModal(dish, catLabel) {
+  $('modalVisual').style.background = GRADIENTS[dish.gradient] || GRADIENTS.cream;
+  $('modalArt').innerHTML = PLATE_SVG;
+  $('modalCat').textContent = catLabel;
+  $('modalTitle').textContent = dish.name;
+  $('modalDesc').textContent = dish.desc;
+  $('modalPrice').textContent = formatPrice(dish.price);
+
+  $('modalBadges').innerHTML = dish.badge
+    ? `<span class="badge b-${dish.badgeType}">${dish.badge}</span>`
+    : '';
+
+  const allergList = $('modalAllerg');
+  if (dish.allergens && dish.allergens.length) {
+    allergList.innerHTML = dish.allergens.map(n => {
+      const a = ALLERGENS[n];
+      return a ? `<span class="allerg-chip"><span class="allerg-chip-icon">${a.icon}</span><span>${a.name}</span></span>` : '';
+    }).join('');
+  } else {
+    allergList.innerHTML = '<span style="color: var(--text-dim); font-style: italic; font-size: 0.88rem;">Aucun allergène majeur déclaré.</span>';
+  }
+
+  const bg = $('modalBg');
+  bg.classList.add('open');
+  bg.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  const bg = $('modalBg');
+  bg.classList.remove('open');
+  bg.setAttribute('aria-hidden', 'true');
+  document.body.style.overflow = '';
+}
+
+function initModal() {
+  $('modalClose').addEventListener('click', closeModal);
+  $('modalBg').addEventListener('click', e => {
+    if (e.target === $('modalBg')) closeModal();
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && $('modalBg').classList.contains('open')) closeModal();
+  });
+}
+
+/* ---- Calendar ---- */
+function initCalendar() {
+  $('calPrev').addEventListener('click', () => {
+    state.calM--;
+    if (state.calM < 0) { state.calM = 11; state.calY--; }
+    renderCalendar();
+  });
+  $('calNext').addEventListener('click', () => {
+    state.calM++;
+    if (state.calM > 11) { state.calM = 0; state.calY++; }
+    renderCalendar();
+  });
+  renderCalendar();
+}
+
+function renderCalendar() {
+  const grid = $('calGrid');
+  const today = new Date(); today.setHours(0,0,0,0);
+
+  $('calMonth').textContent = `${MOIS_FR[state.calM]} ${state.calY}`;
+  grid.innerHTML = '';
+
+  const first = new Date(state.calY, state.calM, 1);
+  let startDow = first.getDay() - 1;
+  if (startDow < 0) startDow = 6;
+
+  const daysIn = new Date(state.calY, state.calM + 1, 0).getDate();
+
+  for (let i = 0; i < startDow; i++) {
+    const e = document.createElement('div');
+    e.className = 'cal-day empty';
+    grid.appendChild(e);
+  }
+
+  for (let d = 1; d <= daysIn; d++) {
+    const date = new Date(state.calY, state.calM, d);
+    const dow = date.getDay();
+    const isPast = date < today;
+    const isClosed = dow === 0 || dow === 1;
+    const isToday = date.getTime() === today.getTime();
+    const isSel = state.date && date.toDateString() === state.date.toDateString();
+
+    const cell = document.createElement('div');
+    cell.className = 'cal-day';
+    if (isPast || isClosed) cell.classList.add('disabled');
+    if (isToday) cell.classList.add('today');
+    if (isSel) cell.classList.add('selected');
+    cell.textContent = d;
+
+    if (!isPast && !isClosed) {
+      cell.addEventListener('click', () => {
+        state.date = date;
+        renderCalendar();
+        goStep(2);
+      });
+    }
+    grid.appendChild(cell);
+  }
+}
+
+/* ---- Reservation steps ---- */
+function initResa() {
+  initCalendar();
+
+  $$('.cover').forEach(b => b.addEventListener('click', () => {
+    $$('.cover').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    state.covers = parseInt(b.dataset.c);
+  }));
+
+  renderSlots();
+
+  $$('[data-back]').forEach(b => b.addEventListener('click', () => goStep(parseInt(b.dataset.back))));
+
+  $('resaForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const pr = $('prenom'), no = $('nom'), te = $('tel');
+    let ok = true;
+    [pr, no, te].forEach(f => f.classList.remove('err'));
+    if (!pr.value.trim()) { pr.classList.add('err'); ok = false; }
+    if (!no.value.trim()) { no.classList.add('err'); ok = false; }
+    if (!te.value.trim()) { te.classList.add('err'); ok = false; }
+    if (!ok) return;
+
+    showConfirmation(pr.value.trim(), no.value.trim(), te.value.trim(), $('email').value.trim());
+  });
+
+  $('newResa').addEventListener('click', resetResa);
+}
+
+function renderSlots() {
+  const midi = ['12:00','12:30','13:00','13:30'];
+  const soir = ['19:00','19:30','20:00','20:30','21:00','21:30'];
+  $('slotsMidi').innerHTML = midi.map(s => `<button class="slot" data-slot="${s}">${s}</button>`).join('');
+  $('slotsSoir').innerHTML = soir.map(s => `<button class="slot" data-slot="${s}">${s}</button>`).join('');
+  $$('.slot').forEach(b => b.addEventListener('click', () => {
+    $$('.slot').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    state.slot = b.dataset.slot;
+    setTimeout(() => goStep(3), 250);
+  }));
+}
+
+function goStep(s) {
+  state.step = s;
+  for (let i = 1; i <= 3; i++) {
+    $(`panel${i}`).classList.toggle('active', i === s);
+  }
+  $$('.step').forEach(d => {
+    const n = parseInt(d.dataset.step);
+    d.classList.remove('active','done');
+    if (n === s) d.classList.add('active');
+    else if (n < s) d.classList.add('done');
+  });
+  $('line1').classList.toggle('passed', s > 1);
+  $('line2').classList.toggle('passed', s > 2);
+
+  if (s === 2 && state.date) {
+    const d = state.date;
+    $('dateShown').textContent = `${JOURS_FR[d.getDay()]} ${d.getDate()} ${MOIS_FR[d.getMonth()]} ${d.getFullYear()}`;
+    state.slot = null;
+    $$('.slot').forEach(x => x.classList.remove('active'));
+  }
+
+  if (s === 3) {
+    const d = state.date;
+    $('bookingSummary').innerHTML = `<strong>${JOURS_FR[d.getDay()]} ${d.getDate()} ${MOIS_FR[d.getMonth()]}</strong> · ${state.slot} · ${state.covers} ${state.covers > 1 ? 'personnes' : 'personne'}`;
+  }
+
+  $('reserver').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function showConfirmation(pr, no, te, em) {
+  const d = state.date;
+  $('confDetails').innerHTML = `
+    <div class="conf-row"><span>Date</span><span>${JOURS_FR[d.getDay()]} ${d.getDate()} ${MOIS_FR[d.getMonth()]} ${d.getFullYear()}</span></div>
+    <div class="conf-row"><span>Horaire</span><span>${state.slot}</span></div>
+    <div class="conf-row"><span>Convives</span><span>${state.covers} ${state.covers > 1 ? 'personnes' : 'personne'}</span></div>
+    <div class="conf-row"><span>Au nom de</span><span>${pr} ${no}</span></div>
+    <div class="conf-row"><span>Téléphone</span><span>${te}</span></div>
+    ${em ? `<div class="conf-row"><span>Email</span><span>${em}</span></div>` : ''}
+  `;
+  $$('.panel').forEach(p => p.classList.remove('active'));
+  $('confirmation').classList.add('show');
+  document.querySelector('.steps').style.display = 'none';
+  $('reserver').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function resetResa() {
+  state.date = null;
+  state.covers = 2;
+  state.slot = null;
+  state.step = 1;
+  $('resaForm').reset();
+  $$('.cover').forEach(b => b.classList.remove('active'));
+  document.querySelector('.cover[data-c="2"]').classList.add('active');
+
+  $('confirmation').classList.remove('show');
+  document.querySelector('.steps').style.display = '';
+
+  for (let i = 1; i <= 3; i++) $(`panel${i}`).classList.toggle('active', i === 1);
+  $$('.step').forEach(d => {
+    d.classList.remove('active','done');
+    if (d.dataset.step === '1') d.classList.add('active');
+  });
+  $('line1').classList.remove('passed');
+  $('line2').classList.remove('passed');
+  renderCalendar();
+}
+
+/* ---- Smooth anchor scroll ---- */
+function initSmoothScroll() {
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const target = a.getAttribute('href');
+      if (target.length > 1) {
+        const el = document.querySelector(target);
+        if (el) {
+          e.preventDefault();
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }
+    });
+  });
+}
+
+/* ---- Init ---- */
+document.addEventListener('DOMContentLoaded', () => {
+  initNav();
+  initReveal();
+  initMenu();
+  initModal();
+  initResa();
+  initSmoothScroll();
+});
+</script>
 </body>
 </html>
