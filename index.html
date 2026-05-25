@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Le Vespa — Cucina Italiana · Bourg-en-Bresse</title>
+  <meta name="description" content="Restaurant italien à Bourg-en-Bresse. Pâtes fraîches, ravioli maison, risotto crémeux. Réservez votre table en ligne.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Grain texture overlay -->
+  <div class="grain" aria-hidden="true"></div>
+
+  <!-- ============ NAVIGATION ============ -->
+  <nav id="navbar">
+    <div class="nav-inner">
+      <a class="nav-logo" href="#home">
+        <span class="logo-script">Le</span>
+        <span class="logo-bold">Vespa</span>
+      </a>
+      <button class="hamburger" id="hamburger" aria-label="Ouvrir le menu">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="#home" class="nav-link active">Accueil</a></li>
+        <li><a href="#menu" class="nav-link">Menu</a></li>
+        <li><a href="#contact" class="nav-link">Contact</a></li>
+        <li><a href="#reservation" class="nav-link">Réserver</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Mobile overlay -->
+  <div class="mobile-overlay" id="mobile-overlay">
+    <button class="mobile-close" id="mobile-close" aria-label="Fermer">✕</button>
+    <nav class="mobile-nav">
+      <a href="#home" class="mobile-link">Accueil</a>
+      <a href="#menu" class="mobile-link">Menu</a>
+      <a href="#contact" class="mobile-link">Contact</a>
+      <a href="#reservation" class="mobile-link">Réserver</a>
+    </nav>
+  </div>
+
+  <!-- ============ ACCUEIL ============ -->
+  <section id="home">
+
+    <!-- Hero -->
+    <div class="hero">
+      <div class="hero-content">
+        <p class="eyebrow reveal">Cucina Italiana · Bourg-en-Bresse</p>
+        <h1 class="hero-title reveal">
+          <em>Le</em>
+          <strong>Vespa</strong>
+        </h1>
+        <p class="hero-tagline reveal">Pâtes fraîches · Ravioli maison · Saveurs authentiques</p>
+        <div class="hero-actions reveal">
+          <a href="#reservation" class="btn btn-gold">Réserver une table</a>
+          <a href="#menu" class="btn btn-outline">Découvrir le menu</a>
+        </div>
+      </div>
+      <div class="hero-scroll-indicator">
+        <span>Défiler</span>
+        <div class="scroll-line"></div>
+      </div>
+    </div>
+
+    <!-- À propos -->
+    <div class="about">
+      <div class="container">
+        <div class="about-layout">
+          <div class="about-text reveal">
+            <p class="eyebrow">Notre histoire</p>
+            <h2>L'authenticité italienne<br>au cœur de la <em>Bresse</em></h2>
+            <p class="about-body">
+              Chez Le Vespa, chaque assiette est une déclaration d'amour à la cuisine italienne.
+              Pâtes fraîches pétries chaque matin, sauces mijotées lentement, produits sélectionnés
+              avec passion — nous cuisons comme on cuisine chez grand-mère, avec le feu en plus.
+            </p>
+            <blockquote class="about-quote">
+              « Qui va piano va sano »
+            </blockquote>
+            <a href="#menu" class="btn btn-outline">Voir le menu complet</a>
+          </div>
+          <div class="about-stats reveal">
+            <div class="stat-card">
+              <span class="stat-num">15+</span>
+              <span class="stat-label">Pasta<br>& Basta</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-num">6</span>
+              <span class="stat-label">Ravioli<br>maison</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-num">100%</span>
+              <span class="stat-label">Fait maison<br>chaque jour</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ============ MENU ============ -->
+  <section id="menu">
+    <div class="container">
+      <div class="section-header reveal">
+        <p class="eyebrow">À la carte</p>
+        <h2>Notre <em>Menu</em></h2>
+        <p class="section-sub">Cliquez sur un plat pour découvrir la composition et les allergènes</p>
+      </div>
+
+      <!-- Tabs -->
+      <div class="menu-tabs reveal">
+        <button class="tab active" data-cat="pasta">Pasta & Basta</button>
+        <button class="tab" data-cat="ravioli">Ravioli & Cie</button>
+        <button class="tab" data-cat="risotto">Risotto</button>
+        <button class="tab" data-cat="desserts">Dolcetissime</button>
+      </div>
+
+      <!-- Category tagline -->
+      <p class="cat-tagline" id="cat-tagline"></p>
+
+      <!-- Dish grid -->
+      <div class="menu-grid" id="menu-grid"></div>
+
+      <!-- Burrata add-on note -->
+      <div class="menu-note reveal" id="menu-note-pasta">
+        <span class="note-icon">❤</span>
+        <p>Coup de cœur de Lili — ajoutez une burrata sur n'importe quelle pasta de votre choix <strong>+5,00&nbsp;€</strong></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CONTACT ============ -->
+  <section id="contact">
+    <div class="container">
+      <div class="section-header reveal">
+        <p class="eyebrow">Venez nous voir</p>
+        <h2>Nous <em>trouver</em></h2>
+      </div>
+      <div class="contact-layout">
+        <div class="contact-info reveal">
+          <div class="contact-item">
+            <div class="contact-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            </div>
+            <div>
+              <p class="contact-label">Adresse</p>
+              <p class="contact-value">7 Rue des Bresses<br>01000 Bourg-en-Bresse</p>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8a19.79 19.79 0 01-3.07-8.68A2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.16 6.16l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+            </div>
+            <div>
+              <p class="contact-label">Téléphone</p>
+              <a class="contact-value contact-link" href="tel:+33474000000">04 74 00 00 00</a>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            </div>
+            <div>
+              <p class="contact-label">Email</p>
+              <a class="contact-value contact-link" href="mailto:contact@levespa-bourg.fr">contact@levespa-bourg.fr</a>
+            </div>
+          </div>
+          <div class="contact-item contact-item--hours">
+            <div class="contact-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>
+            </div>
+            <div>
+              <p class="contact-label">Horaires</p>
+              <div class="hours-grid">
+                <span>Mar – Ven</span><span>12h–14h · 19h–22h</span>
+                <span>Samedi</span><span>12h–14h · 19h–22h30</span>
+                <span class="closed">Dim – Lun</span><span class="closed">Fermé</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="map-block reveal">
+          <div class="map-placeholder">
+            <div class="map-pin-icon">📍</div>
+            <p class="map-city">Bourg-en-Bresse</p>
+            <p class="map-addr">01000 · Ain · Auvergne-Rhône-Alpes</p>
+            <a class="btn btn-outline btn-sm" href="https://maps.google.com/?q=Bourg-en-Bresse" target="_blank" rel="noopener">Ouvrir dans Google Maps</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RÉSERVATION ============ -->
+  <section id="reservation">
+    <div class="container">
+      <div class="section-header reveal">
+        <p class="eyebrow">Votre table vous attend</p>
+        <h2><em>Réserver</em></h2>
+      </div>
+
+      <div class="resa-wrapper" id="resa-wrapper">
+        <!-- Step indicators -->
+        <div class="resa-steps">
+          <div class="resa-step-dot active" data-step="1">
+            <span class="step-num">1</span>
+            <span class="step-label">Date</span>
+          </div>
+          <div class="step-connector"></div>
+          <div class="resa-step-dot" data-step="2">
+            <span class="step-num">2</span>
+            <span class="step-label">Horaire</span>
+          </div>
+          <div class="step-connector"></div>
+          <div class="resa-step-dot" data-step="3">
+            <span class="step-num">3</span>
+            <span class="step-label">Coordonnées</span>
+          </div>
+        </div>
+
+        <!-- Step 1: Calendar -->
+        <div class="resa-panel active" id="panel-1">
+          <h3 class="panel-title">Choisissez une date</h3>
+          <div class="calendar-header">
+            <button class="cal-nav-btn" id="cal-prev" aria-label="Mois précédent">‹</button>
+            <span class="cal-month" id="cal-month-label"></span>
+            <button class="cal-nav-btn" id="cal-next" aria-label="Mois suivant">›</button>
+          </div>
+          <div class="calendar-weekdays">
+            <span>Lun</span><span>Mar</span><span>Mer</span><span>Jeu</span><span>Ven</span><span>Sam</span><span>Dim</span>
+          </div>
+          <div class="calendar-grid" id="calendar-grid"></div>
+          <p class="cal-legend">Les dimanches et lundis, nous sommes fermés.</p>
+        </div>
+
+        <!-- Step 2: Time + Covers -->
+        <div class="resa-panel" id="panel-2">
+          <h3 class="panel-title">Horaire & convives</h3>
+          <div class="selected-date-display" id="selected-date-display"></div>
+          <div class="covers-section">
+            <p class="covers-label">Nombre de personnes</p>
+            <div class="covers-btns">
+              <button class="cover-btn" data-covers="1">1</button>
+              <button class="cover-btn active" data-covers="2">2</button>
+              <button class="cover-btn" data-covers="3">3</button>
+              <button class="cover-btn" data-covers="4">4</button>
+              <button class="cover-btn" data-covers="5">5</button>
+              <button class="cover-btn" data-covers="6">6+</button>
+            </div>
+          </div>
+          <div class="slots-section">
+            <p class="slots-period-label">🌞 Midi</p>
+            <div class="slots-grid" id="slots-midi"></div>
+            <p class="slots-period-label">🌙 Soir</p>
+            <div class="slots-grid" id="slots-soir"></div>
+          </div>
+          <div class="panel-actions">
+            <button class="btn btn-ghost" id="back-1">← Retour</button>
+          </div>
+        </div>
+
+        <!-- Step 3: Form -->
+        <div class="resa-panel" id="panel-3">
+          <h3 class="panel-title">Vos coordonnées</h3>
+          <div class="booking-summary" id="booking-summary"></div>
+          <form class="resa-form" id="resa-form" novalidate>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="f-prenom">Prénom *</label>
+                <input type="text" id="f-prenom" name="prenom" placeholder="Jean" required autocomplete="given-name">
+              </div>
+              <div class="form-group">
+                <label for="f-nom">Nom *</label>
+                <input type="text" id="f-nom" name="nom" placeholder="Dupont" required autocomplete="family-name">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="f-tel">Téléphone *</label>
+                <input type="tel" id="f-tel" name="tel" placeholder="06 12 34 56 78" required autocomplete="tel">
+              </div>
+              <div class="form-group">
+                <label for="f-email">Email</label>
+                <input type="email" id="f-email" name="email" placeholder="jean@mail.fr" autocomplete="email">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="f-message">Message (allergie, occasion spéciale…)</label>
+              <textarea id="f-message" name="message" rows="3" placeholder="Vos remarques…"></textarea>
+            </div>
+            <div class="form-actions">
+              <button type="button" class="btn btn-ghost" id="back-2">← Retour</button>
+              <button type="submit" class="btn btn-gold">Confirmer la réservation</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Confirmation -->
+      <div class="resa-confirmation" id="resa-confirmation">
+        <div class="conf-check">✓</div>
+        <h3>Réservation confirmée !</h3>
+        <p class="conf-details" id="conf-details"></p>
+        <p class="conf-sub">Un rappel vous sera envoyé 24h avant votre repas. À très bientôt !</p>
+        <button class="btn btn-outline" id="new-resa-btn">Nouvelle réservation</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-logo">
+          <span class="logo-script">Le</span>
+          <span class="logo-bold">Vespa</span>
+        </div>
+        <p class="footer-tagline">Cucina Italiana · Bourg-en-Bresse</p>
+        <p class="footer-copy">© 2025 Le Vespa — Tous droits réservés</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============ DISH MODAL ============ -->
+  <div class="modal-overlay" id="modal-overlay" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal" id="modal">
+      <button class="modal-close" id="modal-close" aria-label="Fermer">✕</button>
+      <div class="modal-visual" id="modal-visual">
+        <div class="modal-badge-wrap" id="modal-badge-wrap"></div>
+      </div>
+      <div class="modal-body">
+        <p class="modal-category" id="modal-category"></p>
+        <h2 class="modal-title" id="modal-title"></h2>
+        <p class="modal-desc" id="modal-desc"></p>
+        <div class="modal-price-row">
+          <span class="modal-price" id="modal-price"></span>
+        </div>
+        <div class="modal-allergens-block" id="modal-allergens-block">
+          <p class="allergens-title">Allergènes</p>
+          <div class="allergens-list" id="modal-allergens"></div>
+        </div>
+        <p class="modal-allergen-note">ⓘ Pour toute allergie non listée, parlez-en à notre équipe.</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
