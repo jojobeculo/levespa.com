@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Le Vespa — Dashboard Restaurateur</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&family=Caveat:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg:           #0b0a08;
+  --bg-2:         #0f0e0b;
+  --bg-3:         #141210;
+  --bg-card:      #131109;
+  --bg-panel:     #111009;
+  --gold:         #d4af6d;
+  --gold-2:       #e8c98d;
+  --gold-dim:     rgba(212,175,109,0.14);
+  --gold-glow:    rgba(212,175,109,0.06);
+  --red:          #c84b3c;
+  --red-dim:      rgba(200,75,60,0.14);
+  --green:        #7ba564;
+  --green-dim:    rgba(123,165,100,0.14);
+  --amber:        #e09b3d;
+  --gray-s:       #4a4540;
+  --text:         #f2ede0;
+  --text-2:       #b5ab98;
+  --text-muted:   #877c69;
+  --text-dim:     #5a5246;
+  --border:       rgba(255,255,255,0.06);
+  --border-gold:  rgba(212,175,109,0.22);
+  --serif:        'Playfair Display', Georgia, serif;
+  --sans:         'Inter', system-ui, sans-serif;
+  --hand:         'Caveat', cursive;
+  --ease:         cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-out:     cubic-bezier(0.16, 1, 0.3, 1);
+  --t:            0.28s var(--ease);
+  --t-slow:       0.5s var(--ease-out);
+  --header-h:     64px;
+  --stats-h:      72px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── SCROLLBAR ─────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+
+/* ── HEADER ────────────────────────────────────────────────── */
+.adm-header {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(11,10,8,0.97);
+  backdrop-filter: blur(24px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 2rem;
+  height: var(--header-h);
+  display: flex; align-items: center; justify-content: space-between; gap: 1.5rem;
+}
+
+.adm-logo {
+  display: flex; align-items: center; gap: 0.75rem;
+  text-decoration: none; flex-shrink: 0;
+}
+.adm-logo-mark {
+  width: 38px; height: 38px;
+  border: 1.5px solid var(--border-gold);
+  border-radius: 50%;
+  display: grid; place-items: center;
+  font-family: var(--serif); font-size: 0.95rem; color: var(--gold); font-style: italic;
+  flex-shrink: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(212,175,109,0.06), transparent 70%);
+}
+.adm-logo-name {
+  font-family: var(--serif); font-size: 1.05rem; color: var(--text); line-height: 1.15;
+}
+.adm-logo-name small {
+  display: block; font-family: var(--sans); font-size: 0.6rem; font-weight: 600;
+  letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold);
+  font-style: normal; margin-top: 2px;
+}
+
+.adm-clock {
+  display: flex; flex-direction: column; align-items: center; gap: 1px;
+}
+.adm-clock__date {
+  font-size: 0.7rem; font-weight: 500; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--text-muted);
+}
+.adm-clock__time {
+  font-family: var(--serif); font-size: 1.55rem; color: var(--gold);
+  font-weight: 600; letter-spacing: 0.06em; line-height: 1;
+}
+
+.adm-header-right { display: flex; align-items: center; gap: 0.65rem; }
+
+.adm-btn {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  padding: 0.42rem 0.9rem;
+  border-radius: 6px; font-family: var(--sans); font-size: 0.78rem;
+  font-weight: 500; letter-spacing: 0.04em; cursor: pointer;
+  text-decoration: none; transition: all var(--t); white-space: nowrap;
+  border: 1px solid var(--border-gold); color: var(--gold); background: transparent;
+}
+.adm-btn:hover { background: var(--gold-dim); color: var(--gold-2); }
+.adm-btn--ghost { border-color: var(--border); color: var(--text-2); }
+.adm-btn--ghost:hover { background: rgba(255,255,255,0.04); color: var(--text); }
+
+/* ── STATS BAR ─────────────────────────────────────────────── */
+.adm-stats {
+  background: var(--bg-2);
+  border-bottom: 1px solid var(--border);
+  padding: 0 2rem;
+  height: var(--stats-h);
+  display: flex; align-items: center; gap: 2rem;
+  overflow-x: auto; flex-shrink: 0;
+}
+.adm-stat {
+  display: flex; align-items: center; gap: 0.65rem; flex-shrink: 0;
+}
+.adm-stat-dot {
+  width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+}
+.adm-stat-dot--gold  { background: var(--gold); box-shadow: 0 0 7px rgba(212,175,109,0.55); }
+.adm-stat-dot--green { background: var(--green); box-shadow: 0 0 7px rgba(123,165,100,0.55); }
+.adm-stat-dot--red   { background: var(--red); box-shadow: 0 0 7px rgba(200,75,60,0.55); }
+.adm-stat-dot--gray  { background: var(--gray-s); }
+.adm-stat-val {
+  font-size: 1.2rem; font-weight: 700; color: var(--text); line-height: 1;
+}
+.adm-stat-label {
+  font-size: 0.68rem; font-weight: 400; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 0.08em; margin-top: 1px;
+}
+.adm-sep {
+  width: 1px; height: 30px; background: var(--border); flex-shrink: 0;
+}
+
+/* ── MAIN LAYOUT ───────────────────────────────────────────── */
+.adm-main {
+  display: grid;
+  grid-template-columns: 420px 1fr;
+  height: calc(100vh - var(--header-h) - var(--stats-h));
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* ── RESERVATION LIST ──────────────────────────────────────── */
+.adm-res-pane {
+  background: var(--bg-2);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  overflow: hidden; min-height: 0;
+}
+.adm-res-head {
+  padding: 1.25rem 1.5rem 0;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.adm-res-head h2 {
+  font-family: var(--serif); font-size: 1.05rem; font-weight: 600;
+  color: var(--text); margin-bottom: 0.85rem;
+}
+.adm-tabs {
+  display: flex; gap: 0; margin-bottom: -1px;
+}
+.adm-tab {
+  padding: 0.5rem 1rem; font-size: 0.77rem; font-weight: 500;
+  color: var(--text-muted); cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: color var(--t), border-color var(--t);
+  letter-spacing: 0.04em; white-space: nowrap; user-select: none;
+}
+.adm-tab.on  { color: var(--gold); border-bottom-color: var(--gold); }
+.adm-tab:hover:not(.on) { color: var(--text-2); }
+
+.adm-res-list {
+  flex: 1; overflow-y: auto; padding: 0.5rem 0;
+  scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.08) transparent;
+}
+
+.adm-group-label {
+  padding: 0.65rem 1.5rem 0.4rem;
+  font-size: 0.63rem; font-weight: 700; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--text-dim);
+}
+
+.adm-row {
+  padding: 0.85rem 1.5rem;
+  display: grid; grid-template-columns: 54px 1fr auto;
+  gap: 0.7rem; align-items: start;
+  cursor: pointer; border-left: 3px solid transparent;
+  transition: background var(--t), border-color var(--t);
+}
+.adm-row:hover { background: rgba(255,255,255,0.025); }
+.adm-row.on    { background: var(--gold-glow); border-left-color: var(--gold); }
+.adm-row.seated              { border-left-color: var(--red); }
+.adm-row.seated.on           { background: rgba(200,75,60,0.05); }
+
+.adm-row-time { text-align: center; }
+.adm-row-time-val   { font-size: 1rem; font-weight: 700; color: var(--text); line-height: 1; }
+.adm-row-time-table { font-size: 0.62rem; color: var(--text-dim); margin-top: 3px;
+  text-transform: uppercase; letter-spacing: 0.06em; }
+
+.adm-row-info {}
+.adm-row-name {
+  font-size: 0.88rem; font-weight: 600; color: var(--text); line-height: 1.2;
+}
+.adm-row-meta {
+  display: flex; align-items: center; gap: 0.4rem;
+  margin-top: 0.28rem; flex-wrap: wrap;
+}
+.adm-covers-lbl {
+  font-size: 0.74rem; color: var(--text-muted);
+  display: flex; align-items: center; gap: 0.22rem;
+}
+.adm-t-badge {
+  font-size: 0.66rem; padding: 1px 5px; border-radius: 3px;
+  background: rgba(255,255,255,0.05); color: var(--text-dim);
+  font-weight: 500; letter-spacing: 0.04em;
+}
+.adm-alergs { display: flex; gap: 2px; align-items: center; flex-wrap: wrap; }
+.adm-alerg  { font-size: 0.72rem; opacity: 0.9; }
+.adm-row-note {
+  margin-top: 0.38rem;
+  font-family: var(--hand); font-size: 0.82rem; color: var(--text-2);
+  line-height: 1.4; display: -webkit-box;
+  -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+
+.adm-row-right {
+  display: flex; flex-direction: column; align-items: flex-end; gap: 0.3rem;
+}
+.adm-badge {
+  font-size: 0.63rem; font-weight: 700; letter-spacing: 0.07em;
+  text-transform: uppercase; padding: 2px 7px; border-radius: 4px;
+}
+.adm-badge.confirmed { background: var(--gold-dim); color: var(--gold); }
+.adm-badge.seated    { background: var(--red-dim);  color: var(--red); }
+
+/* ── FLOOR PLAN ────────────────────────────────────────────── */
+.adm-fp-pane {
+  background: var(--bg);
+  display: flex; flex-direction: column;
+  overflow: hidden; min-height: 0;
+}
+.adm-fp-head {
+  padding: 1.25rem 1.75rem;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  flex-shrink: 0;
+}
+.adm-fp-head h2 {
+  font-family: var(--serif); font-size: 1.05rem; font-weight: 600; color: var(--text);
+}
+.adm-legend {
+  display: flex; align-items: center; gap: 1.25rem;
+}
+.adm-leg-item {
+  display: flex; align-items: center; gap: 0.32rem;
+  font-size: 0.69rem; color: var(--text-muted); white-space: nowrap;
+}
+.adm-leg-dot {
+  width: 9px; height: 9px; border-radius: 3px; flex-shrink: 0;
+}
+.adm-leg-dot--libre    { background: var(--green); }
+.adm-leg-dot--reserved { background: var(--gold); }
+.adm-leg-dot--seated   { background: var(--red); }
+.adm-leg-dot--unavail  { background: var(--gray-s); }
+
+.adm-fp-body {
+  flex: 1; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  padding: 1.5rem; min-height: 0;
+}
+.adm-fp-svg {
+  width: 100%; height: 100%;
+  max-width: 700px; max-height: 520px;
+}
+.adm-fp-svg svg { width: 100%; height: 100%; overflow: visible; }
+
+/* SVG table hover */
+.fp-t { cursor: pointer; }
+.fp-t:hover .fp-t-rect { filter: brightness(1.3) saturate(1.2); }
+
+/* ── DETAIL PANEL ──────────────────────────────────────────── */
+.adm-panel {
+  position: fixed; top: 0; right: 0;
+  width: 390px; height: 100vh;
+  background: var(--bg-panel);
+  border-left: 1px solid var(--border-gold);
+  z-index: 200;
+  transform: translateX(100%);
+  transition: transform var(--t-slow);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+.adm-panel.open { transform: translateX(0); }
+
+.adm-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.45); z-index: 190;
+  opacity: 0; pointer-events: none;
+  transition: opacity var(--t);
+}
+.adm-overlay.open { opacity: 1; pointer-events: auto; }
+
+.adm-panel-head {
+  padding: 1.5rem 1.75rem 1.2rem;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem;
+  background: var(--bg-panel); flex-shrink: 0;
+  position: relative;
+}
+.adm-panel-head::after {
+  content: ''; position: absolute; bottom: -1px; left: 1.75rem; right: 1.75rem;
+  height: 1px; background: linear-gradient(90deg, var(--border-gold), transparent);
+}
+.adm-panel-title {
+  font-family: var(--serif); font-size: 1.25rem; font-weight: 600;
+  color: var(--text); line-height: 1.2;
+}
+.adm-panel-sub {
+  font-size: 0.73rem; color: var(--text-muted); margin-top: 0.2rem;
+  font-weight: 400; letter-spacing: 0.03em;
+}
+.adm-close {
+  width: 32px; height: 32px; border-radius: 6px; border: 1px solid var(--border);
+  background: transparent; color: var(--text-muted); cursor: pointer; font-size: 1.1rem;
+  display: grid; place-items: center; transition: all var(--t); flex-shrink: 0;
+  line-height: 1; margin-top: -1px;
+}
+.adm-close:hover { border-color: var(--border-gold); color: var(--text); background: var(--gold-dim); }
+
+.adm-panel-body {
+  flex: 1; overflow-y: auto; padding: 1.5rem 1.75rem;
+  scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.06) transparent;
+}
+
+.adm-sec { margin-bottom: 1.75rem; }
+.adm-sec:last-child { margin-bottom: 0.5rem; }
+.adm-sec-title {
+  font-size: 0.62rem; font-weight: 700; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--text-dim);
+  margin-bottom: 0.75rem; padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+.adm-kv-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem;
+}
+.adm-kv { display: flex; flex-direction: column; gap: 2px; }
+.adm-kv-label { font-size: 0.63rem; color: var(--text-dim); text-transform: uppercase;
+  letter-spacing: 0.08em; font-weight: 600; }
+.adm-kv-val { font-size: 0.9rem; color: var(--text); font-weight: 500; }
+.adm-kv-val--accent { color: var(--gold); font-size: 1.1rem; font-weight: 700; }
+.adm-kv-val--small { font-size: 0.8rem; word-break: break-all; }
+.adm-full { grid-column: span 2; }
+
+.adm-contact-row {
+  display: flex; gap: 0.55rem; margin-top: 1rem;
+}
+.adm-contact-btn {
+  flex: 1; display: flex; align-items: center; justify-content: center; gap: 0.35rem;
+  padding: 0.6rem 0.7rem; border: 1px solid var(--border); border-radius: 8px;
+  color: var(--text-2); text-decoration: none; font-size: 0.79rem; font-weight: 500;
+  transition: all var(--t);
+}
+.adm-contact-btn:hover { border-color: var(--border-gold); color: var(--gold); background: var(--gold-dim); }
+
+.adm-allergen-list { display: flex; flex-wrap: wrap; gap: 0.45rem; }
+.adm-allergen-pill {
+  display: flex; align-items: center; gap: 0.28rem;
+  padding: 0.28rem 0.6rem; background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border); border-radius: 6px;
+  font-size: 0.78rem; color: var(--text-2);
+}
+.adm-allergen-pill-icon { font-size: 0.85rem; }
+.adm-no-item { font-size: 0.82rem; color: var(--text-dim); font-style: italic; }
+
+.adm-note-block {
+  font-family: var(--hand); font-size: 1.02rem; line-height: 1.65; color: var(--text-2);
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--border); border-left: 3px solid var(--gold-dim);
+  border-radius: 0 8px 8px 0; padding: 0.85rem 1rem;
+}
+
+.adm-libre-msg {
+  padding: 2.5rem 0; text-align: center;
+}
+.adm-libre-icon { font-size: 2.5rem; display: block; margin-bottom: 0.75rem; opacity: 0.35; }
+.adm-libre-text { font-size: 0.88rem; color: var(--text-dim); }
+
+/* ── RESPONSIVE ────────────────────────────────────────────── */
+@media (max-width: 960px) {
+  .adm-main {
+    grid-template-columns: 1fr;
+    grid-template-rows: 50vh 50vh;
+    height: auto;
+    overflow: visible;
+  }
+  .adm-res-pane  { height: 50vh; border-right: none; border-bottom: 1px solid var(--border); }
+  .adm-fp-pane   { height: 50vh; }
+  .adm-panel     { width: 100%; max-width: 420px; }
+}
+@media (max-width: 640px) {
+  .adm-header    { padding: 0 1rem; }
+  .adm-clock     { display: none; }
+  .adm-stats     { padding: 0 1rem; gap: 1.1rem; }
+  .adm-fp-head   { padding: 0.9rem 1rem; flex-direction: column; align-items: flex-start; gap: 0.65rem; }
+  .adm-legend    { flex-wrap: wrap; gap: 0.7rem; }
+  .adm-res-head  { padding: 1rem 1rem 0; }
+  .adm-row       { padding: 0.8rem 1rem; }
+  .adm-panel     { width: 100%; max-width: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="adm-header">
+  <div class="adm-logo">
+    <div class="adm-logo-mark">V</div>
+    <div class="adm-logo-name">
+      Le Vespa
+      <small>Espace restaurateur</small>
+    </div>
+  </div>
+
+  <div class="adm-clock">
+    <div class="adm-clock__date" id="clockDate">—</div>
+    <div class="adm-clock__time" id="clockTime">--:--</div>
+  </div>
+
+  <div class="adm-header-right">
+    <a href="index.html" class="adm-btn adm-btn--ghost">← Site client</a>
+  </div>
+</header>
+
+<!-- STATS BAR -->
+<div class="adm-stats" id="statsBar"></div>
+
+<!-- MAIN -->
+<main class="adm-main">
+
+  <!-- LEFT — Reservation list -->
+  <section class="adm-res-pane">
+    <div class="adm-res-head">
+      <h2>Réservations du jour</h2>
+      <div class="adm-tabs" id="filterTabs">
+        <div class="adm-tab on" data-f="all">Toutes</div>
+        <div class="adm-tab" data-f="midi">Midi</div>
+        <div class="adm-tab" data-f="soir">Soir</div>
+      </div>
+    </div>
+    <div class="adm-res-list" id="resList"></div>
+  </section>
+
+  <!-- RIGHT — Floor plan -->
+  <section class="adm-fp-pane">
+    <div class="adm-fp-head">
+      <h2>Plan de salle</h2>
+      <div class="adm-legend">
+        <div class="adm-leg-item"><div class="adm-leg-dot adm-leg-dot--libre"></div>Libre</div>
+        <div class="adm-leg-item"><div class="adm-leg-dot adm-leg-dot--reserved"></div>Réservé</div>
+        <div class="adm-leg-item"><div class="adm-leg-dot adm-leg-dot--seated"></div>Occupé</div>
+        <div class="adm-leg-item"><div class="adm-leg-dot adm-leg-dot--unavail"></div>Indispo</div>
+      </div>
+    </div>
+    <div class="adm-fp-body">
+      <div class="adm-fp-svg" id="fpWrap"></div>
+    </div>
+  </section>
+
+</main>
+
+<!-- DETAIL PANEL -->
+<div class="adm-panel" id="panel">
+  <div class="adm-panel-head">
+    <div>
+      <div class="adm-panel-title" id="panelTitle">Table —</div>
+      <div class="adm-panel-sub" id="panelSub"></div>
+    </div>
+    <button class="adm-close" id="panelClose" aria-label="Fermer">✕</button>
+  </div>
+  <div class="adm-panel-body" id="panelBody"></div>
+</div>
+<div class="adm-overlay" id="overlay"></div>
+
+<script>
+/* ── DATA ─────────────────────────────────────────────────────── */
+
+const ALLERGENS = {
+  1:  { icon: '🌾', name: 'Gluten' },
+  2:  { icon: '🦐', name: 'Crustacés' },
+  3:  { icon: '🥚', name: 'Œufs' },
+  4:  { icon: '🐟', name: 'Poisson' },
+  5:  { icon: '🥜', name: 'Arachides' },
+  6:  { icon: '🫘', name: 'Soja' },
+  7:  { icon: '🥛', name: 'Lait' },
+  8:  { icon: '🌰', name: 'Fruits à coque' },
+  9:  { icon: '🌿', name: 'Céleri' },
+  10: { icon: '🌻', name: 'Moutarde' },
+  11: { icon: '⚪', name: 'Sésame' },
+  12: { icon: '🍷', name: 'Sulfites' },
+  13: { icon: '🌱', name: 'Lupin' },
+  14: { icon: '🐚', name: 'Mollusques' }
+};
+
+const RES = [
+  {
+    id: 1, table: 2, time: '12:00', covers: 2, status: 'confirmed',
+    name: 'Marie Dupont', phone: '06 12 34 56 78', email: 'marie.dupont@email.fr',
+    allergens: [1, 7],
+    note: 'Nous prendrons les tagliatelles aux truffes en entrée, puis l\'osso buco en plat. Peut-on avoir une carafe d\'eau pétillante ?'
+  },
+  {
+    id: 2, table: 4, time: '12:30', covers: 4, status: 'confirmed',
+    name: 'Thomas Bernard', phone: '07 98 76 54 32', email: 'tbernard@gmail.com',
+    allergens: [],
+    note: 'Table d\'anniversaire pour ma femme. Si possible une petite décoration florale à notre arrivée — merci d\'avance !'
+  },
+  {
+    id: 3, table: 6, time: '13:00', covers: 3, status: 'confirmed',
+    name: 'Claire Martin', phone: '06 55 44 33 22', email: 'claire.martin@orange.fr',
+    allergens: [2, 4],
+    note: 'Une personne du groupe est végétarienne — pourriez-vous prévoir un plat adapté ? Les deux autres prendront les ravioli au bœuf.'
+  },
+  {
+    id: 4, table: 3, time: '12:15', covers: 2, status: 'seated',
+    name: 'Famille Garnier', phone: '04 74 21 11 00', email: 'garnier.jean@wanadoo.fr',
+    allergens: [],
+    note: ''
+  },
+  {
+    id: 5, table: 8, time: '12:45', covers: 3, status: 'seated',
+    name: 'Lucas Mercier', phone: '06 66 77 88 99', email: 'lmercier@hotmail.com',
+    allergens: [8],
+    note: ''
+  },
+  {
+    id: 6, table: 10, time: '19:00', covers: 2, status: 'confirmed',
+    name: 'Pierre Lefort', phone: '06 11 22 33 44', email: 'pierre.lefort@sfr.fr',
+    allergens: [],
+    note: 'Dîner romantique pour notre premier anniversaire. On hésite entre le risotto aux cèpes et les tagliatelles au homard.'
+  },
+  {
+    id: 7, table: 11, time: '19:30', covers: 6, status: 'confirmed',
+    name: 'Sophie Rousseau', phone: '07 55 66 77 88', email: 's.rousseau@entreprise.fr',
+    allergens: [8, 5],
+    note: 'Dîner d\'équipe — 6 collègues. Un coin calme si possible. Prévoir des options végétariennes pour 2 personnes parmi nous.'
+  },
+  {
+    id: 8, table: 12, time: '20:00', covers: 6, status: 'confirmed',
+    name: 'Antoine & Isabelle Moreau', phone: '06 88 99 00 11', email: 'moreau.famille@gmail.com',
+    allergens: [7],
+    note: 'Repas de famille (6 pers.). On commandera les ravioli maison et les tagliatelles bolognaise. Une personne intolérante au lactose.'
+  },
+  {
+    id: 9, table: 7, time: '20:30', covers: 2, status: 'confirmed',
+    name: 'Julie Fontaine', phone: '06 22 33 44 55', email: 'j.fontaine@gmail.com',
+    allergens: [],
+    note: 'Nous prendrons sûrement le menu dégustation. Peut-on avoir la sélection de vins associée ?'
+  }
+];
+
+// cx/cy = center, w/h = dimensions (all in SVG units)
+const TABLES = [
+  { id: 1,  label: 'T1',  seats: 2, cx: 95,  cy: 200, w: 52, h: 52, status: 'libre',    resId: null },
+  { id: 2,  label: 'T2',  seats: 2, cx: 95,  cy: 285, w: 52, h: 52, status: 'reserved', resId: 1    },
+  { id: 3,  label: 'T3',  seats: 2, cx: 95,  cy: 370, w: 52, h: 52, status: 'seated',   resId: 4    },
+  { id: 4,  label: 'T4',  seats: 4, cx: 248, cy: 200, w: 62, h: 62, status: 'reserved', resId: 2    },
+  { id: 5,  label: 'T5',  seats: 4, cx: 248, cy: 315, w: 62, h: 62, status: 'libre',    resId: null },
+  { id: 6,  label: 'T6',  seats: 4, cx: 248, cy: 420, w: 62, h: 62, status: 'reserved', resId: 3    },
+  { id: 7,  label: 'T7',  seats: 2, cx: 398, cy: 200, w: 52, h: 52, status: 'reserved', resId: 9    },
+  { id: 8,  label: 'T8',  seats: 4, cx: 398, cy: 315, w: 62, h: 62, status: 'seated',   resId: 5    },
+  { id: 9,  label: 'T9',  seats: 4, cx: 398, cy: 420, w: 62, h: 62, status: 'libre',    resId: null },
+  { id: 10, label: 'T10', seats: 2, cx: 545, cy: 240, w: 52, h: 52, status: 'reserved', resId: 6    },
+  { id: 11, label: 'T11', seats: 6, cx: 545, cy: 370, w: 92, h: 58, status: 'reserved', resId: 7    },
+  { id: 12, label: 'T12', seats: 6, cx: 310, cy: 470, w: 100,h: 52, status: 'reserved', resId: 8    }
+];
+
+/* ── STATE ─────────────────────────────────────────────────── */
+const S = { filter: 'all', activeTableId: null, activeResId: null, open: false };
+
+/* ── STATUS PALETTE ────────────────────────────────────────── */
+const PAL = {
+  libre:    { fill: '#1e3019', stroke: '#7ba564', text: '#7ba564' },
+  reserved: { fill: '#2e2208', stroke: '#d4af6d', text: '#d4af6d' },
+  seated:   { fill: '#2a1410', stroke: '#c84b3c', text: '#c84b3c' },
+  unavail:  { fill: '#181614', stroke: '#4a4540', text: '#4a4540' }
+};
+
+/* ── HELPERS ───────────────────────────────────────────────── */
+const getRes = id => RES.find(r => r.id === id) || null;
+const getTable = id => TABLES.find(t => t.id === id) || null;
+
+function fmtDate() {
+  const d = new Date();
+  const days   = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+  const months = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+  return `${days[d.getDay()]} ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+}
+function fmtTime() {
+  return new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+}
+
+/* ── CLOCK ─────────────────────────────────────────────────── */
+function tickClock() {
+  document.getElementById('clockDate').textContent = fmtDate();
+  document.getElementById('clockTime').textContent = fmtTime();
+}
+
+/* ── STATS ─────────────────────────────────────────────────── */
+function renderStats() {
+  const covers   = RES.reduce((s, r) => s + r.covers, 0);
+  const seated   = TABLES.filter(t => t.status === 'seated').length;
+  const reserved = TABLES.filter(t => t.status === 'reserved').length;
+  const libre    = TABLES.filter(t => t.status === 'libre').length;
+  document.getElementById('statsBar').innerHTML = `
+    <div class="adm-stat">
+      <div class="adm-stat-dot adm-stat-dot--gold"></div>
+      <div><div class="adm-stat-val">${RES.length}</div><div class="adm-stat-label">Réservations</div></div>
+    </div>
+    <div class="adm-sep"></div>
+    <div class="adm-stat">
+      <div class="adm-stat-dot adm-stat-dot--gold"></div>
+      <div><div class="adm-stat-val">${covers}</div><div class="adm-stat-label">Couverts</div></div>
+    </div>
+    <div class="adm-sep"></div>
+    <div class="adm-stat">
+      <div class="adm-stat-dot adm-stat-dot--red"></div>
+      <div><div class="adm-stat-val">${seated}</div><div class="adm-stat-label">Occupées</div></div>
+    </div>
+    <div class="adm-sep"></div>
+    <div class="adm-stat">
+      <div class="adm-stat-dot adm-stat-dot--gold"></div>
+      <div><div class="adm-stat-val">${reserved}</div><div class="adm-stat-label">Réservées</div></div>
+    </div>
+    <div class="adm-sep"></div>
+    <div class="adm-stat">
+      <div class="adm-stat-dot adm-stat-dot--green"></div>
+      <div><div class="adm-stat-val">${libre}</div><div class="adm-stat-label">Libres</div></div>
+    </div>`;
+}
+
+/* ── RESERVATION LIST ──────────────────────────────────────── */
+function renderList() {
+  let list = [...RES].sort((a, b) => a.time.localeCompare(b.time));
+  if (S.filter === 'midi') list = list.filter(r => +r.time.split(':')[0] < 16);
+  if (S.filter === 'soir') list = list.filter(r => +r.time.split(':')[0] >= 16);
+
+  const midi = list.filter(r => +r.time.split(':')[0] < 16);
+  const soir = list.filter(r => +r.time.split(':')[0] >= 16);
+
+  function group(label, arr) {
+    if (!arr.length) return '';
+    let h = `<div class="adm-group-label">${label}</div>`;
+    arr.forEach(r => {
+      const alerHtml = r.allergens.map(a =>
+        `<span class="adm-alerg" title="${ALLERGENS[a].name}">${ALLERGENS[a].icon}</span>`).join('');
+      const on = S.activeResId === r.id ? ' on' : '';
+      h += `
+        <div class="adm-row${on} ${r.status}" onclick="onClickRes(${r.id})">
+          <div class="adm-row-time">
+            <div class="adm-row-time-val">${r.time}</div>
+            <div class="adm-row-time-table">T${r.table}</div>
+          </div>
+          <div class="adm-row-info">
+            <div class="adm-row-name">${r.name}</div>
+            <div class="adm-row-meta">
+              <span class="adm-covers-lbl">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                  <circle cx="6" cy="3.5" r="2.3" stroke="currentColor" stroke-width="1.2"/>
+                  <path d="M2 11c0-2.2 1.8-4 4-4s4 1.8 4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                </svg>
+                ${r.covers} pers.
+              </span>
+              <span class="adm-t-badge">Table ${r.table}</span>
+              ${r.allergens.length ? `<div class="adm-alergs">${alerHtml}</div>` : ''}
+            </div>
+            ${r.note ? `<div class="adm-row-note">"${r.note}"</div>` : ''}
+          </div>
+          <div class="adm-row-right">
+            <span class="adm-badge ${r.status}">${r.status === 'seated' ? 'À table' : 'Confirmé'}</span>
+          </div>
+        </div>`;
+    });
+    return h;
+  }
+
+  let html = '';
+  if (S.filter !== 'soir') html += group('Service du midi', midi);
+  if (S.filter !== 'midi') html += group('Service du soir', soir);
+  if (!html) html = '<div style="padding:2rem 1.5rem;font-size:0.85rem;color:var(--text-dim)">Aucune réservation.</div>';
+
+  document.getElementById('resList').innerHTML = html;
+}
+
+/* ── FLOOR PLAN ────────────────────────────────────────────── */
+function chairs(t) {
+  const { cx, cy, w, h, seats, status } = t;
+  const cr = 5.5, gap = 9;
+  const p = PAL[status];
+  let pts = [];
+  if (seats === 2) {
+    pts = [{ x: cx, y: cy - h/2 - gap }, { x: cx, y: cy + h/2 + gap }];
+  } else if (seats === 4) {
+    pts = [
+      { x: cx, y: cy - h/2 - gap }, { x: cx, y: cy + h/2 + gap },
+      { x: cx - w/2 - gap, y: cy }, { x: cx + w/2 + gap, y: cy }
+    ];
+  } else {
+    const off = w * 0.23;
+    pts = [
+      { x: cx - off, y: cy - h/2 - gap }, { x: cx + off, y: cy - h/2 - gap },
+      { x: cx - off, y: cy + h/2 + gap }, { x: cx + off, y: cy + h/2 + gap },
+      { x: cx - w/2 - gap, y: cy     }, { x: cx + w/2 + gap, y: cy     }
+    ];
+  }
+  return pts.map(c =>
+    `<circle cx="${c.x}" cy="${c.y}" r="${cr}" fill="${p.fill}" stroke="${p.stroke}" stroke-width="1" opacity="0.65"/>`
+  ).join('');
+}
+
+function renderFP() {
+  let tSVG = '';
+  TABLES.forEach(t => {
+    const p = PAL[t.status];
+    const on = S.activeTableId === t.id;
+    const r = t.resId ? getRes(t.resId) : null;
+    const sw = on ? 2.5 : 1.5;
+    const glowId = on && t.status !== 'unavail' ? `url(#gl-${t.status})` : 'none';
+    const subTxt = r
+      ? `<text x="${t.cx}" y="${t.cy + 9}" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="${p.text}" opacity="0.8">${r.time}</text>`
+      : `<text x="${t.cx}" y="${t.cy + 9}" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="${p.text}" opacity="0.45">${t.seats}p</text>`;
+
+    tSVG += `
+      <g class="fp-t" onclick="onClickTable(${t.id})">
+        ${chairs(t)}
+        <rect class="fp-t-rect"
+          x="${t.cx - t.w/2}" y="${t.cy - t.h/2}" width="${t.w}" height="${t.h}" rx="8"
+          fill="${p.fill}" stroke="${p.stroke}" stroke-width="${sw}" filter="${glowId}"/>
+        <text x="${t.cx}" y="${t.cy - 4}" text-anchor="middle" font-family="Inter,sans-serif"
+          font-size="11" font-weight="700" fill="${p.text}">${t.label}</text>
+        ${subTxt}
+      </g>`;
+  });
+
+  document.getElementById('fpWrap').innerHTML = `
+    <svg viewBox="0 0 700 510" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="gl-reserved" x="-60%" y="-60%" width="220%" height="220%">
+          <feGaussianBlur stdDeviation="4" result="b"/>
+          <feFlood flood-color="#d4af6d" flood-opacity="0.5" result="c"/>
+          <feComposite in="c" in2="b" operator="in" result="s"/>
+          <feMerge><feMergeNode in="s"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <filter id="gl-seated" x="-60%" y="-60%" width="220%" height="220%">
+          <feGaussianBlur stdDeviation="4" result="b"/>
+          <feFlood flood-color="#c84b3c" flood-opacity="0.5" result="c"/>
+          <feComposite in="c" in2="b" operator="in" result="s"/>
+          <feMerge><feMergeNode in="s"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <filter id="gl-libre" x="-60%" y="-60%" width="220%" height="220%">
+          <feGaussianBlur stdDeviation="4" result="b"/>
+          <feFlood flood-color="#7ba564" flood-opacity="0.4" result="c"/>
+          <feComposite in="c" in2="b" operator="in" result="s"/>
+          <feMerge><feMergeNode in="s"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+
+      <!-- Walls -->
+      <rect x="8" y="8" width="684" height="494" rx="5"
+            fill="#0e0c0a" stroke="rgba(255,255,255,0.08)" stroke-width="2"/>
+
+      <!-- Kitchen (top-right) -->
+      <rect x="473" y="8" width="219" height="155" rx="0"
+            fill="#090807" stroke="rgba(255,255,255,0.07)" stroke-width="1.5"/>
+      <line x1="473" y1="8"   x2="473" y2="163" stroke="rgba(255,255,255,0.1)" stroke-width="2"/>
+      <line x1="473" y1="163" x2="692" y2="163" stroke="rgba(255,255,255,0.1)" stroke-width="2"/>
+      <text x="582" y="88" text-anchor="middle" dominant-baseline="middle"
+            font-family="Inter,sans-serif" font-size="12" font-weight="600"
+            fill="rgba(255,255,255,0.13)" letter-spacing="0.14em">CUISINE</text>
+
+      <!-- Bar (top-left) -->
+      <rect x="8" y="8" width="175" height="110" rx="0"
+            fill="#0c0a08" stroke="rgba(255,255,255,0.07)" stroke-width="1.5"/>
+      <line x1="183" y1="8"   x2="183" y2="118" stroke="rgba(255,255,255,0.1)" stroke-width="2"/>
+      <line x1="8"   y1="118" x2="183" y2="118" stroke="rgba(255,255,255,0.1)" stroke-width="2"/>
+      <text x="95" y="65" text-anchor="middle" dominant-baseline="middle"
+            font-family="Inter,sans-serif" font-size="12" font-weight="600"
+            fill="rgba(255,255,255,0.13)" letter-spacing="0.14em">BAR</text>
+
+      <!-- Entrance gap in bottom wall -->
+      <line x1="8"   y1="502" x2="260" y2="502" stroke="rgba(255,255,255,0.08)" stroke-width="2"/>
+      <line x1="380" y1="502" x2="692" y2="502" stroke="rgba(255,255,255,0.08)" stroke-width="2"/>
+      <text x="320" y="502" text-anchor="middle" dominant-baseline="middle"
+            font-family="Inter,sans-serif" font-size="10" font-weight="600"
+            fill="rgba(255,255,255,0.18)" letter-spacing="0.14em">ENTRÉE</text>
+
+      <!-- Window line (left wall hint) -->
+      <line x1="10" y1="145" x2="10" y2="492" stroke="rgba(255,255,255,0.04)" stroke-width="4"/>
+
+      <!-- Tables -->
+      ${tSVG}
+    </svg>`;
+}
+
+/* ── PANEL ─────────────────────────────────────────────────── */
+function openPanel(tableId) {
+  const t = getTable(tableId);
+  if (!t) return;
+  const r = t.resId ? getRes(t.resId) : null;
+
+  document.getElementById('panelTitle').textContent = `Table ${t.id}`;
+
+  if (!r) {
+    const lbl = { libre: 'Disponible', unavail: 'Indisponible' };
+    document.getElementById('panelSub').textContent = lbl[t.status] || '';
+    document.getElementById('panelBody').innerHTML = `
+      <div class="adm-libre-msg">
+        <span class="adm-libre-icon">${t.status === 'libre' ? '✓' : '—'}</span>
+        <p class="adm-libre-text">${t.status === 'libre' ? 'Cette table est libre.' : 'Cette table n\'est pas disponible.'}</p>
+      </div>`;
+  } else {
+    document.getElementById('panelSub').textContent =
+      r.status === 'seated' ? 'Client actuellement à table' : 'Réservation confirmée';
+
+    const allergyHtml = r.allergens.length
+      ? r.allergens.map(a => `
+          <div class="adm-allergen-pill">
+            <span class="adm-allergen-pill-icon">${ALLERGENS[a].icon}</span>
+            <span>${ALLERGENS[a].name}</span>
+          </div>`).join('')
+      : '<span class="adm-no-item">Aucun allergène déclaré</span>';
+
+    const noteHtml = r.note
+      ? `<div class="adm-note-block">"${r.note}"</div>`
+      : '<span class="adm-no-item">Aucune note laissée par le client.</span>';
+
+    document.getElementById('panelBody').innerHTML = `
+      <div class="adm-sec">
+        <div class="adm-sec-title">Réservation</div>
+        <div class="adm-kv-grid">
+          <div class="adm-kv">
+            <span class="adm-kv-label">Horaire</span>
+            <span class="adm-kv-val adm-kv-val--accent">${r.time}</span>
+          </div>
+          <div class="adm-kv">
+            <span class="adm-kv-label">Couverts</span>
+            <span class="adm-kv-val adm-kv-val--accent">${r.covers} pers.</span>
+          </div>
+          <div class="adm-kv">
+            <span class="adm-kv-label">Statut</span>
+            <span class="adm-kv-val">
+              <span class="adm-badge ${r.status}">${r.status === 'seated' ? 'À table' : 'Confirmé'}</span>
+            </span>
+          </div>
+          <div class="adm-kv">
+            <span class="adm-kv-label">Capacité</span>
+            <span class="adm-kv-val">${t.seats} places</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="adm-sec">
+        <div class="adm-sec-title">Client</div>
+        <div class="adm-kv-grid">
+          <div class="adm-kv adm-full">
+            <span class="adm-kv-label">Nom</span>
+            <span class="adm-kv-val">${r.name}</span>
+          </div>
+          <div class="adm-kv adm-full">
+            <span class="adm-kv-label">Téléphone</span>
+            <span class="adm-kv-val">${r.phone}</span>
+          </div>
+          <div class="adm-kv adm-full">
+            <span class="adm-kv-label">Email</span>
+            <span class="adm-kv-val adm-kv-val--small">${r.email}</span>
+          </div>
+        </div>
+        <div class="adm-contact-row">
+          <a href="tel:${r.phone.replace(/\s/g,'')}" class="adm-contact-btn">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M4.5 1H2C1.45 1 1 1.45 1 2C1 8.08 5.92 13 12 13C12.55 13 13 12.55 13 12V9.5L10 8.5L9 9.5C7.73 8.73 6.27 7.27 5.5 6L6.5 5L5.5 2L4.5 1Z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            </svg>
+            Appeler
+          </a>
+          <a href="mailto:${r.email}" class="adm-contact-btn">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="1" y="2.5" width="12" height="9" rx="1.5" stroke="currentColor" stroke-width="1.2"/>
+              <path d="M1 4.5L7 8L13 4.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+            Envoyer un email
+          </a>
+        </div>
+      </div>
+
+      <div class="adm-sec">
+        <div class="adm-sec-title">Allergènes déclarés</div>
+        <div class="adm-allergen-list">${allergyHtml}</div>
+      </div>
+
+      <div class="adm-sec">
+        <div class="adm-sec-title">Note du client</div>
+        ${noteHtml}
+      </div>`;
+  }
+
+  S.activeTableId = tableId;
+  S.activeResId   = r ? r.id : null;
+  S.open = true;
+
+  document.getElementById('panel').classList.add('open');
+  document.getElementById('overlay').classList.add('open');
+  renderList();
+  renderFP();
+}
+
+function closePanel() {
+  S.open = false;
+  S.activeTableId = null;
+  S.activeResId   = null;
+  document.getElementById('panel').classList.remove('open');
+  document.getElementById('overlay').classList.remove('open');
+  renderList();
+  renderFP();
+}
+
+/* ── CLICK HANDLERS ────────────────────────────────────────── */
+function onClickTable(tableId) {
+  if (S.activeTableId === tableId && S.open) { closePanel(); } else { openPanel(tableId); }
+}
+function onClickRes(resId) {
+  const r = getRes(resId);
+  if (!r) return;
+  if (S.activeResId === resId && S.open) { closePanel(); } else { openPanel(r.table); }
+}
+
+/* ── INIT ──────────────────────────────────────────────────── */
+document.getElementById('filterTabs').addEventListener('click', e => {
+  const tab = e.target.closest('.adm-tab');
+  if (!tab) return;
+  document.querySelectorAll('.adm-tab').forEach(t => t.classList.remove('on'));
+  tab.classList.add('on');
+  S.filter = tab.dataset.f;
+  renderList();
+});
+
+document.getElementById('panelClose').addEventListener('click', closePanel);
+document.getElementById('overlay').addEventListener('click', closePanel);
+
+tickClock();
+setInterval(tickClock, 30000);
+renderStats();
+renderList();
+renderFP();
+</script>
+</body>
+</html>
