@@ -1918,6 +1918,24 @@ function showConfirmation(pr, no, te, em) {
   $('confirmation').classList.add('show');
   document.querySelector('.steps').style.display = 'none';
   $('reserver').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  // Persist to admin dashboard via localStorage
+  try {
+    const saved = JSON.parse(localStorage.getItem('levespa_res') || '[]');
+    saved.push({
+      id: Date.now(),
+      date: d.toISOString().split('T')[0],
+      time: state.slot,
+      covers: state.covers,
+      name: pr + ' ' + no,
+      phone: te,
+      email: em || '',
+      note: $('msg').value.trim(),
+      status: 'confirmed',
+      source: 'web'
+    });
+    localStorage.setItem('levespa_res', JSON.stringify(saved));
+  } catch(_) {}
 }
 
 function resetResa() {

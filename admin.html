@@ -247,6 +247,23 @@ body {
 }
 .adm-badge.confirmed { background: var(--gold-dim); color: var(--gold); }
 .adm-badge.seated    { background: var(--red-dim);  color: var(--red); }
+.adm-badge.web       { background: rgba(100,160,220,0.14); color: #82b4e0; }
+.adm-badge.waiting   { background: rgba(255,255,255,0.06); color: var(--text-dim); }
+.adm-row-web-dot {
+  width: 6px; height: 6px; border-radius: 50%; background: #82b4e0;
+  box-shadow: 0 0 5px rgba(100,160,220,0.7); flex-shrink: 0; display: inline-block;
+}
+.adm-web-notice {
+  margin: 0.5rem 1.5rem 0;
+  padding: 0.5rem 0.75rem;
+  background: rgba(100,160,220,0.07);
+  border: 1px solid rgba(100,160,220,0.2);
+  border-radius: 6px;
+  font-size: 0.73rem; color: #82b4e0;
+  display: flex; align-items: center; gap: 0.5rem;
+}
+.adm-web-notice-dot { width: 6px; height: 6px; border-radius: 50%; background: #82b4e0;
+  box-shadow: 0 0 5px rgba(100,160,220,0.7); flex-shrink: 0; }
 
 /* ── FLOOR PLAN ────────────────────────────────────────────── */
 .adm-fp-pane {
@@ -516,7 +533,7 @@ const ALLERGENS = {
   14: { icon: '🐚', name: 'Mollusques' }
 };
 
-const RES = [
+let RES = [
   {
     id: 1, table: 2, time: '12:00', covers: 2, status: 'confirmed',
     name: 'Marie Dupont', phone: '06 12 34 56 78', email: 'marie.dupont@email.fr',
@@ -574,7 +591,7 @@ const RES = [
 ];
 
 // cx/cy = center, w/h = dimensions (all in SVG units)
-const TABLES = [
+let TABLES = [
   { id: 1,  label: 'T1',  seats: 2, cx: 95,  cy: 200, w: 52, h: 52, status: 'libre',    resId: null },
   { id: 2,  label: 'T2',  seats: 2, cx: 95,  cy: 285, w: 52, h: 52, status: 'reserved', resId: 1    },
   { id: 3,  label: 'T3',  seats: 2, cx: 95,  cy: 370, w: 52, h: 52, status: 'seated',   resId: 4    },
@@ -590,7 +607,51 @@ const TABLES = [
 ];
 
 /* ── STATE ─────────────────────────────────────────────────── */
-const S = { filter: 'all', activeTableId: null, activeResId: null, open: false };
+const S = { filter: 'all', activeTableId: null, activeResId: null, open: false, webCount: 0 };
+
+/* ── STORAGE SYNC ──────────────────────────────────────────── */
+function syncStorage() {
+  try {
+    const stored = JSON.parse(localStorage.getItem('levespa_res') || '[]');
+    if (!stored.length) return;
+
+    const today = new Date().toISOString().split('T')[0];
+    let added = 0;
+
+    stored.forEach(sr => {
+      if (sr.date !== today) return;                    // skip other dates
+      if (RES.find(r => r.id === sr.id)) return;        // already in list
+
+      // Best-fit table: libre, enough seats, not already taken
+      const taken = new Set(RES.map(r => r.table));
+      const candidate = TABLES
+        .filter(t => t.status === 'libre' && t.seats >= sr.covers && t.label !== 'Bar' && !taken.has(t.id))
+        .sort((a, b) => a.seats - b.seats)[0] || null;
+
+      if (candidate) {
+        candidate.status   = 'reserved';
+        candidate.resId    = sr.id;
+      }
+
+      RES.push({
+        id:        sr.id,
+        table:     candidate ? candidate.id : null,
+        time:      sr.time,
+        covers:    sr.covers,
+        name:      sr.name,
+        phone:     sr.phone,
+        email:     sr.email,
+        allergens: [],
+        note:      sr.note || '',
+        status:    'confirmed',
+        source:    'web'
+      });
+      added++;
+    });
+
+    S.webCount = RES.filter(r => r.source === 'web').length;
+  } catch(e) { console.warn('sync error', e); }
+}
 
 /* ── STATUS PALETTE ────────────────────────────────────────── */
 const PAL = {
@@ -626,6 +687,7 @@ function renderStats() {
   const seated   = TABLES.filter(t => t.status === 'seated').length;
   const reserved = TABLES.filter(t => t.status === 'reserved').length;
   const libre    = TABLES.filter(t => t.status === 'libre').length;
+  const webCount = RES.filter(r => r.source === 'web').length;
   document.getElementById('statsBar').innerHTML = `
     <div class="adm-stat">
       <div class="adm-stat-dot adm-stat-dot--gold"></div>
@@ -650,7 +712,12 @@ function renderStats() {
     <div class="adm-stat">
       <div class="adm-stat-dot adm-stat-dot--green"></div>
       <div><div class="adm-stat-val">${libre}</div><div class="adm-stat-label">Libres</div></div>
-    </div>`;
+    </div>
+    ${webCount ? `<div class="adm-sep"></div>
+    <div class="adm-stat">
+      <div class="adm-stat-dot" style="background:#82b4e0;box-shadow:0 0 7px rgba(100,160,220,0.6)"></div>
+      <div><div class="adm-stat-val" style="color:#82b4e0">${webCount}</div><div class="adm-stat-label">En ligne</div></div>
+    </div>` : ''}`;
 }
 
 /* ── RESERVATION LIST ──────────────────────────────────────── */
@@ -662,6 +729,8 @@ function renderList() {
   const midi = list.filter(r => +r.time.split(':')[0] < 16);
   const soir = list.filter(r => +r.time.split(':')[0] >= 16);
 
+  const webRes = RES.filter(r => r.source === 'web');
+
   function group(label, arr) {
     if (!arr.length) return '';
     let h = `<div class="adm-group-label">${label}</div>`;
@@ -669,14 +738,20 @@ function renderList() {
       const alerHtml = r.allergens.map(a =>
         `<span class="adm-alerg" title="${ALLERGENS[a].name}">${ALLERGENS[a].icon}</span>`).join('');
       const on = S.activeResId === r.id ? ' on' : '';
+      const tableLabel = r.table ? `Table ${r.table}` : '— à assigner';
+      const tableTime  = r.table ? `T${r.table}` : '?';
+      const webDot     = r.source === 'web' ? '<span class="adm-row-web-dot"></span>' : '';
+      const badge      = r.source === 'web'
+        ? `<span class="adm-badge web">En ligne</span>`
+        : `<span class="adm-badge ${r.status}">${r.status === 'seated' ? 'À table' : 'Confirmé'}</span>`;
       h += `
         <div class="adm-row${on} ${r.status}" onclick="onClickRes(${r.id})">
           <div class="adm-row-time">
             <div class="adm-row-time-val">${r.time}</div>
-            <div class="adm-row-time-table">T${r.table}</div>
+            <div class="adm-row-time-table">${tableTime}</div>
           </div>
           <div class="adm-row-info">
-            <div class="adm-row-name">${r.name}</div>
+            <div class="adm-row-name" style="display:flex;align-items:center;gap:0.4rem">${webDot}${r.name}</div>
             <div class="adm-row-meta">
               <span class="adm-covers-lbl">
                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
@@ -685,23 +760,27 @@ function renderList() {
                 </svg>
                 ${r.covers} pers.
               </span>
-              <span class="adm-t-badge">Table ${r.table}</span>
+              <span class="adm-t-badge">${tableLabel}</span>
               ${r.allergens.length ? `<div class="adm-alergs">${alerHtml}</div>` : ''}
             </div>
             ${r.note ? `<div class="adm-row-note">"${r.note}"</div>` : ''}
           </div>
-          <div class="adm-row-right">
-            <span class="adm-badge ${r.status}">${r.status === 'seated' ? 'À table' : 'Confirmé'}</span>
-          </div>
+          <div class="adm-row-right">${badge}</div>
         </div>`;
     });
     return h;
   }
 
   let html = '';
+  if (webRes.length) {
+    html += `<div class="adm-web-notice">
+      <div class="adm-web-notice-dot"></div>
+      ${webRes.length} réservation${webRes.length > 1 ? 's' : ''} reçue${webRes.length > 1 ? 's' : ''} en ligne aujourd'hui
+    </div>`;
+  }
   if (S.filter !== 'soir') html += group('Service du midi', midi);
   if (S.filter !== 'midi') html += group('Service du soir', soir);
-  if (!html) html = '<div style="padding:2rem 1.5rem;font-size:0.85rem;color:var(--text-dim)">Aucune réservation.</div>';
+  if (!midi.length && !soir.length) html += '<div style="padding:2rem 1.5rem;font-size:0.85rem;color:var(--text-dim)">Aucune réservation.</div>';
 
   document.getElementById('resList').innerHTML = html;
 }
@@ -833,88 +912,11 @@ function openPanel(tableId) {
         <p class="adm-libre-text">${t.status === 'libre' ? 'Cette table est libre.' : 'Cette table n\'est pas disponible.'}</p>
       </div>`;
   } else {
-    document.getElementById('panelSub').textContent =
-      r.status === 'seated' ? 'Client actuellement à table' : 'Réservation confirmée';
-
-    const allergyHtml = r.allergens.length
-      ? r.allergens.map(a => `
-          <div class="adm-allergen-pill">
-            <span class="adm-allergen-pill-icon">${ALLERGENS[a].icon}</span>
-            <span>${ALLERGENS[a].name}</span>
-          </div>`).join('')
-      : '<span class="adm-no-item">Aucun allergène déclaré</span>';
-
-    const noteHtml = r.note
-      ? `<div class="adm-note-block">"${r.note}"</div>`
-      : '<span class="adm-no-item">Aucune note laissée par le client.</span>';
-
-    document.getElementById('panelBody').innerHTML = `
-      <div class="adm-sec">
-        <div class="adm-sec-title">Réservation</div>
-        <div class="adm-kv-grid">
-          <div class="adm-kv">
-            <span class="adm-kv-label">Horaire</span>
-            <span class="adm-kv-val adm-kv-val--accent">${r.time}</span>
-          </div>
-          <div class="adm-kv">
-            <span class="adm-kv-label">Couverts</span>
-            <span class="adm-kv-val adm-kv-val--accent">${r.covers} pers.</span>
-          </div>
-          <div class="adm-kv">
-            <span class="adm-kv-label">Statut</span>
-            <span class="adm-kv-val">
-              <span class="adm-badge ${r.status}">${r.status === 'seated' ? 'À table' : 'Confirmé'}</span>
-            </span>
-          </div>
-          <div class="adm-kv">
-            <span class="adm-kv-label">Capacité</span>
-            <span class="adm-kv-val">${t.seats} places</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="adm-sec">
-        <div class="adm-sec-title">Client</div>
-        <div class="adm-kv-grid">
-          <div class="adm-kv adm-full">
-            <span class="adm-kv-label">Nom</span>
-            <span class="adm-kv-val">${r.name}</span>
-          </div>
-          <div class="adm-kv adm-full">
-            <span class="adm-kv-label">Téléphone</span>
-            <span class="adm-kv-val">${r.phone}</span>
-          </div>
-          <div class="adm-kv adm-full">
-            <span class="adm-kv-label">Email</span>
-            <span class="adm-kv-val adm-kv-val--small">${r.email}</span>
-          </div>
-        </div>
-        <div class="adm-contact-row">
-          <a href="tel:${r.phone.replace(/\s/g,'')}" class="adm-contact-btn">
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M4.5 1H2C1.45 1 1 1.45 1 2C1 8.08 5.92 13 12 13C12.55 13 13 12.55 13 12V9.5L10 8.5L9 9.5C7.73 8.73 6.27 7.27 5.5 6L6.5 5L5.5 2L4.5 1Z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-            </svg>
-            Appeler
-          </a>
-          <a href="mailto:${r.email}" class="adm-contact-btn">
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect x="1" y="2.5" width="12" height="9" rx="1.5" stroke="currentColor" stroke-width="1.2"/>
-              <path d="M1 4.5L7 8L13 4.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
-            </svg>
-            Envoyer un email
-          </a>
-        </div>
-      </div>
-
-      <div class="adm-sec">
-        <div class="adm-sec-title">Allergènes déclarés</div>
-        <div class="adm-allergen-list">${allergyHtml}</div>
-      </div>
-
-      <div class="adm-sec">
-        <div class="adm-sec-title">Note du client</div>
-        ${noteHtml}
-      </div>`;
+    const subLbl = r.source === 'web'
+      ? 'Reçue en ligne · ' + (r.status === 'seated' ? 'à table' : 'confirmée')
+      : (r.status === 'seated' ? 'Client actuellement à table' : 'Réservation confirmée');
+    document.getElementById('panelSub').textContent = subLbl;
+    document.getElementById('panelBody').innerHTML = buildResBody(r, t);
   }
 
   S.activeTableId = tableId;
@@ -944,7 +946,107 @@ function onClickTable(tableId) {
 function onClickRes(resId) {
   const r = getRes(resId);
   if (!r) return;
-  if (S.activeResId === resId && S.open) { closePanel(); } else { openPanel(r.table); }
+  if (S.activeResId === resId && S.open) { closePanel(); return; }
+  if (r.table) {
+    openPanel(r.table);
+  } else {
+    // Web reservation without table assigned — open panel directly
+    document.getElementById('panelTitle').textContent = 'Réservation web';
+    document.getElementById('panelSub').textContent   = 'Table à assigner · reçue en ligne';
+    document.getElementById('panelBody').innerHTML    = buildResBody(r, null);
+    S.activeTableId = null;
+    S.activeResId   = r.id;
+    S.open = true;
+    document.getElementById('panel').classList.add('open');
+    document.getElementById('overlay').classList.add('open');
+    renderList();
+    renderFP();
+  }
+}
+
+// Extracted so both openPanel and onClickRes can reuse it
+function buildResBody(r, t) {
+  const allergyHtml = r.allergens.length
+    ? r.allergens.map(a => `
+        <div class="adm-allergen-pill">
+          <span class="adm-allergen-pill-icon">${ALLERGENS[a].icon}</span>
+          <span>${ALLERGENS[a].name}</span>
+        </div>`).join('')
+    : '<span class="adm-no-item">Aucun allergène déclaré</span>';
+
+  const noteHtml = r.note
+    ? `<div class="adm-note-block">"${r.note}"</div>`
+    : '<span class="adm-no-item">Aucune note laissée par le client.</span>';
+
+  const sourceBadge = r.source === 'web'
+    ? `<div class="adm-kv">
+        <span class="adm-kv-label">Source</span>
+        <span class="adm-kv-val"><span class="adm-badge web" style="font-size:0.7rem">Réservé en ligne</span></span>
+      </div>` : '';
+
+  return `
+    <div class="adm-sec">
+      <div class="adm-sec-title">Réservation</div>
+      <div class="adm-kv-grid">
+        <div class="adm-kv">
+          <span class="adm-kv-label">Horaire</span>
+          <span class="adm-kv-val adm-kv-val--accent">${r.time}</span>
+        </div>
+        <div class="adm-kv">
+          <span class="adm-kv-label">Couverts</span>
+          <span class="adm-kv-val adm-kv-val--accent">${r.covers} pers.</span>
+        </div>
+        <div class="adm-kv">
+          <span class="adm-kv-label">Statut</span>
+          <span class="adm-kv-val">
+            <span class="adm-badge ${r.status}">${r.status === 'seated' ? 'À table' : 'Confirmé'}</span>
+          </span>
+        </div>
+        <div class="adm-kv">
+          <span class="adm-kv-label">Table</span>
+          <span class="adm-kv-val">${t ? `${t.seats} places` : '— à assigner'}</span>
+        </div>
+        ${sourceBadge}
+      </div>
+    </div>
+
+    <div class="adm-sec">
+      <div class="adm-sec-title">Client</div>
+      <div class="adm-kv-grid">
+        <div class="adm-kv adm-full">
+          <span class="adm-kv-label">Nom</span>
+          <span class="adm-kv-val">${r.name}</span>
+        </div>
+        <div class="adm-kv adm-full">
+          <span class="adm-kv-label">Téléphone</span>
+          <span class="adm-kv-val">${r.phone}</span>
+        </div>
+        <div class="adm-kv adm-full">
+          <span class="adm-kv-label">Email</span>
+          <span class="adm-kv-val adm-kv-val--small">${r.email || '—'}</span>
+        </div>
+      </div>
+      <div class="adm-contact-row">
+        <a href="tel:${r.phone.replace(/\s/g,'')}" class="adm-contact-btn">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M4.5 1H2C1.45 1 1 1.45 1 2C1 8.08 5.92 13 12 13C12.55 13 13 12.55 13 12V9.5L10 8.5L9 9.5C7.73 8.73 6.27 7.27 5.5 6L6.5 5L5.5 2L4.5 1Z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+          Appeler
+        </a>
+        ${r.email ? `<a href="mailto:${r.email}" class="adm-contact-btn">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="2.5" width="12" height="9" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M1 4.5L7 8L13 4.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+          Envoyer un email
+        </a>` : ''}
+      </div>
+    </div>
+
+    <div class="adm-sec">
+      <div class="adm-sec-title">Allergènes déclarés</div>
+      <div class="adm-allergen-list">${allergyHtml}</div>
+    </div>
+
+    <div class="adm-sec">
+      <div class="adm-sec-title">Note du client</div>
+      ${noteHtml}
+    </div>`;
 }
 
 /* ── INIT ──────────────────────────────────────────────────── */
@@ -960,6 +1062,17 @@ document.getElementById('filterTabs').addEventListener('click', e => {
 document.getElementById('panelClose').addEventListener('click', closePanel);
 document.getElementById('overlay').addEventListener('click', closePanel);
 
+// Sync from another tab when a client makes a reservation
+window.addEventListener('storage', e => {
+  if (e.key === 'levespa_res') {
+    syncStorage();
+    renderStats();
+    renderList();
+    renderFP();
+  }
+});
+
+syncStorage();
 tickClock();
 setInterval(tickClock, 30000);
 renderStats();
