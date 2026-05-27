@@ -404,6 +404,18 @@ body {
 .adm-allergen-pill-icon { font-size: 0.85rem; }
 .adm-no-item { font-size: 0.82rem; color: var(--text-dim); font-style: italic; }
 
+.adm-preorder-item {
+  display: flex; align-items: center; gap: 0.55rem;
+  padding: 0.38rem 0; border-bottom: 1px solid var(--border);
+  font-size: 0.84rem; color: var(--text-2);
+}
+.adm-preorder-item:last-child { border-bottom: none; }
+.adm-preorder-qty {
+  font-family: var(--serif); font-size: 0.92rem; color: var(--gold);
+  font-weight: 700; min-width: 28px; flex-shrink: 0;
+}
+.adm-row-preorder { font-size: 0.72rem; color: var(--gold); margin-top: 0.22rem; opacity: 0.85; }
+
 .adm-note-block {
   font-family: var(--hand); font-size: 1.02rem; line-height: 1.65; color: var(--text-2);
   background: rgba(255,255,255,0.02);
@@ -643,6 +655,7 @@ function syncStorage() {
         email:     sr.email,
         allergens: [],
         note:      sr.note || '',
+        preorder:  sr.preorder || {},
         status:    'confirmed',
         source:    'web'
       });
@@ -764,6 +777,7 @@ function renderList() {
               ${r.allergens.length ? `<div class="adm-alergs">${alerHtml}</div>` : ''}
             </div>
             ${r.note ? `<div class="adm-row-note">"${r.note}"</div>` : ''}
+            ${r.preorder && Object.keys(r.preorder).length ? `<div class="adm-row-preorder">🍝 ${Object.values(r.preorder).reduce((s,q)=>s+q,0)} plat(s) pré-sélectionné(s)</div>` : ''}
           </div>
           <div class="adm-row-right">${badge}</div>
         </div>`;
@@ -1046,7 +1060,19 @@ function buildResBody(r, t) {
     <div class="adm-sec">
       <div class="adm-sec-title">Note du client</div>
       ${noteHtml}
-    </div>`;
+    </div>
+
+    ${r.preorder && Object.keys(r.preorder).length ? `
+    <div class="adm-sec">
+      <div class="adm-sec-title">Commande prévisionnelle</div>
+      <div>
+        ${Object.entries(r.preorder).map(([name, qty]) => `
+          <div class="adm-preorder-item">
+            <span class="adm-preorder-qty">×${qty}</span>
+            <span>${name}</span>
+          </div>`).join('')}
+      </div>
+    </div>` : ''}`;
 }
 
 /* ── INIT ──────────────────────────────────────────────────── */
